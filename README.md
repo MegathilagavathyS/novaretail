@@ -140,6 +140,7 @@ You can test APIs using:
 - CRUD → Core operations of REST API
   # GET method 
 <img width="619" height="322" alt="image" src="https://github.com/user-attachments/assets/486b19db-4e74-4c0a-a628-a947def9daf2" />
+
   # POST method 
 adding users , one by one 
 <img width="543" height="473" alt="image" src="https://github.com/user-attachments/assets/6e0ae0e8-3647-43a0-b62f-78dcad5916ff" />
