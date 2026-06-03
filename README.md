@@ -138,3 +138,4 @@ You can test APIs using:
 - Service → Business logic (optional)
 - Repository → Database layer (future)
 - CRUD → Core operations of REST API
+<img width="619" height="322" alt="image" src="https://github.com/user-attachments/assets/486b19db-4e74-4c0a-a628-a947def9daf2" />
