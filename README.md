@@ -144,3 +144,12 @@ You can test APIs using:
 adding users , one by one 
 <img width="543" height="473" alt="image" src="https://github.com/user-attachments/assets/6e0ae0e8-3647-43a0-b62f-78dcad5916ff" />
 
+  # PUT method 
+the 1 user is updated into the " kumar anna "
+<img width="834" height="569" alt="Screenshot 2026-06-03 150347" src="https://github.com/user-attachments/assets/6cdcc3c5-eaff-4ebc-b61f-12122190d3ca" />
+<img width="569" height="428" alt="image" src="https://github.com/user-attachments/assets/659e9144-8967-4127-ac8d-1b558d18a859" />
+
+ 
+
+
+
