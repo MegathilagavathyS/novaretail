@@ -9,5 +9,13 @@ class DemoApplicationTests {
 	@Test
 	void contextLoads() {
 	}
+	
+	@SpringBootTest
+	@ActiveProfiles("test")
+	class DemoApplicationTests {
+	    @Test
+	    void contextLoads() {
+	    }
+	}
 
 }
