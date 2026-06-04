@@ -1,42 +1,55 @@
 package com.example.demo.service;
 
 import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserService {
 
-    private List<User> users = new ArrayList<>();
+    private final UserRepository userRepository;
+
+    // Constructor Injection
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     // Get all users
     public List<User> getAllUsers() {
-        return users;
+        return userRepository.findAll();
+    }
+
+    // Get user by id
+    public User getUserById(Integer id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     // Add user
-    public String addUser(User user) {
-        users.add(user);
-        return "User added successfully";
+    public User addUser(User user) {
+        return userRepository.save(user);
     }
 
     // Update user
-    public String updateUser(int id, User updatedUser) {
-        for (User user : users) {
-            if (user.getId() == id) {
-                user.setName(updatedUser.getName());
-                user.setEmail(updatedUser.getEmail());
-                return "User updated successfully";
-            }
-        }
-        return "User not found";
+    public User updateUser(Integer id, User updatedUser) {
+
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        existingUser.setName(updatedUser.getName());
+        existingUser.setEmail(updatedUser.getEmail());
+
+        return userRepository.save(existingUser);
     }
 
     // Delete user
-    public String deleteUser(int id) {
-        users.removeIf(user -> user.getId() == id);
-        return "User deleted successfully";
+    public void deleteUser(Integer id) {
+
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        userRepository.delete(existingUser);
     }
 }
