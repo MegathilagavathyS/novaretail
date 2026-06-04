@@ -19,7 +19,6 @@ target/
 *.iml
 *.ipr
 
-
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -32,3 +31,30 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment & Credentials ###
+.env
+.env.local
+.env.*.local
+*.properties.local
+application-*.properties
+
+### Database ###
+*.db
+*.sqlite
+*.h2.db
+
+### Logs ###
+logs/
+*.log
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### IDE ###
+*.swp
+*.swo
+*~
+.project
+.classpath
