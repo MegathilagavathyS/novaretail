@@ -1,52 +1,40 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.User;
+import com.example.demo.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    List<User> users = new ArrayList<>();
+    private final UserService userService;
 
-    // GET API
+    // Constructor Injection
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @GetMapping
     public List<User> getUsers() {
-        return users;
+        return userService.getAllUsers();
     }
 
-    // POST API
     @PostMapping
     public String addUser(@RequestBody User user) {
-        users.add(user);
-        return "User added successfully";
+        return userService.addUser(user);
     }
 
-    // PUT API
     @PutMapping("/{id}")
     public String updateUser(@PathVariable int id,
-                             @RequestBody User updatedUser) {
-
-        for (User user : users) {
-            if (user.getId() == id) {
-                user.setName(updatedUser.getName());
-                user.setEmail(updatedUser.getEmail());
-                return "User updated";
-            }
-        }
-
-        return "User not found";
+                             @RequestBody User user) {
+        return userService.updateUser(id, user);
     }
 
-    // DELETE API
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable int id) {
-
-        users.removeIf(user -> user.getId() == id);
-
-        return "User deleted";
+        return userService.deleteUser(id);
     }
 }
