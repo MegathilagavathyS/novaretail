@@ -1,15 +1,9 @@
-package com.example.demo.model;
+package com.example.demo.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-@Entity
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class UserRequestDTO {
 
     @NotBlank(message = "Name is required")
     private String name;
@@ -18,26 +12,12 @@ public class User {
     @NotBlank(message = "Email is required")
     private String email;
 
-    public User() {
+    public UserRequestDTO() {
     }
 
-    public User(String name, String email) {
+    public UserRequestDTO(String name, String email) {
         this.name = name;
         this.email = email;
-    }
-
-    public User(Integer id, String name, String email) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {
