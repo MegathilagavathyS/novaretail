@@ -5,6 +5,7 @@ import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -46,6 +47,25 @@ public class UserController {
             @PathVariable String name) {
 
         return userService.getUsersByName(name);
+    }
+
+    @GetMapping("/paged")
+    public Page<UserResponseDTO> getUsersWithPagination(
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "5")
+            int size,
+
+            @RequestParam(defaultValue = "id")
+            String sortBy) {
+
+        return userService.getUsersWithPagination(
+                page,
+                size,
+                sortBy
+        );
     }
 
     // CREATE USER
