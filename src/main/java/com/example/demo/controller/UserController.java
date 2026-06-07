@@ -32,6 +32,22 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    // GET USER BY Email
+    @GetMapping("/email/{email}")
+    public UserResponseDTO getUserByEmail(
+            @PathVariable String email) {
+
+        return userService.getUserByEmail(email);
+    }
+
+    // GET USER BY Name
+    @GetMapping("/name/{name}")
+    public List<UserResponseDTO> getUsersByName(
+            @PathVariable String name) {
+
+        return userService.getUsersByName(name);
+    }
+
     // CREATE USER
     @PostMapping
     public UserResponseDTO addUser(

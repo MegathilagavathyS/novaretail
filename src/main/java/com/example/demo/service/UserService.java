@@ -44,6 +44,31 @@ public class UserService {
         return mapToResponseDTO(user);
     }
 
+    // Get User By Email
+    public UserResponseDTO getUserByEmail(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UserNotFoundException(
+                                "User not found with email: " + email));
+
+        return mapToResponseDTO(user);
+    }
+
+    // Get User By Name
+    public List<UserResponseDTO> getUsersByName(String name) {
+
+        List<User> users = userRepository.findByName(name);
+
+        if (users.isEmpty()) {
+            throw new UserNotFoundException(
+                    "No users found with name: " + name);
+        }
+
+        return users.stream()
+                .map(this::mapToResponseDTO)
+                .toList();
+    }
     // Add User
     public UserResponseDTO addUser(UserRequestDTO dto) {
 
