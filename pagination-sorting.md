@@ -465,6 +465,7 @@ Returns:
 ```text
 Users 5-6
 ```
+<img width="597" height="677" alt="image" src="https://github.com/user-attachments/assets/439bcb59-9aaa-4a19-b1ff-d6744875b77c" />
 
 ---
 
