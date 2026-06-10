@@ -7,7 +7,7 @@ import com.example.demo.model.Profile;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -26,12 +26,14 @@ public class UserController {
     }
 
     // GET ALL USERS
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @GetMapping
     public List<UserResponseDTO> getUsers() {
         return userService.getAllUsers();
     }
 
     // GET USER BY ID
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     @GetMapping("/{id}")
     public UserResponseDTO getUserById(
             @PathVariable Integer id) {
@@ -40,6 +42,7 @@ public class UserController {
     }
 
     // CREATE USER
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public UserResponseDTO addUser(
             @Valid @RequestBody UserRequestDTO dto) {
@@ -48,6 +51,7 @@ public class UserController {
     }
 
     // UPDATE USER
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public UserResponseDTO updateUser(
             @PathVariable Integer id,
@@ -57,6 +61,7 @@ public class UserController {
     }
 
     // DELETE USER
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public String deleteUser(
             @PathVariable Integer id) {

@@ -47,7 +47,8 @@ public class UserService {
         return new UserResponseDTO(
                 user.getId(),
                 user.getName(),
-                user.getEmail()
+                user.getEmail(),
+                user.getRole()
         );
     }
 
@@ -87,6 +88,7 @@ public class UserService {
                     )
             );
         }
+        user.setRole(dto.getRole());
 
         if (dto.getAddresses() != null) {
 

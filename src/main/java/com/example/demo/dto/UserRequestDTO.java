@@ -16,6 +16,8 @@ public class UserRequestDTO {
     @NotBlank(message = "Password is required")
     private String password;
 
+    private String role;
+
     private List<AddressDTO> addresses;
 
     public UserRequestDTO() {
@@ -51,5 +53,13 @@ public class UserRequestDTO {
 
     public void setAddresses(List<AddressDTO> addresses) {
         this.addresses = addresses;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
