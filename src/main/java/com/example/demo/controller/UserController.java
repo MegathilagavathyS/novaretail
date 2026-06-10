@@ -2,10 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.UserRequestDTO;
 import com.example.demo.dto.UserResponseDTO;
+import com.example.demo.model.Address;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -33,41 +34,6 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    // GET USER BY Email
-    @GetMapping("/email/{email}")
-    public UserResponseDTO getUserByEmail(
-            @PathVariable String email) {
-
-        return userService.getUserByEmail(email);
-    }
-
-    // GET USER BY Name
-    @GetMapping("/name/{name}")
-    public List<UserResponseDTO> getUsersByName(
-            @PathVariable String name) {
-
-        return userService.getUsersByName(name);
-    }
-
-    @GetMapping("/paged")
-    public Page<UserResponseDTO> getUsersWithPagination(
-
-            @RequestParam(defaultValue = "0")
-            int page,
-
-            @RequestParam(defaultValue = "5")
-            int size,
-
-            @RequestParam(defaultValue = "id")
-            String sortBy) {
-
-        return userService.getUsersWithPagination(
-                page,
-                size,
-                sortBy
-        );
-    }
-
     // CREATE USER
     @PostMapping
     public UserResponseDTO addUser(
@@ -91,5 +57,58 @@ public class UserController {
             @PathVariable Integer id) {
 
         return userService.deleteUser(id);
+    }
+
+    // SEARCH BY EMAIL
+    @GetMapping("/email/{email}")
+    public UserResponseDTO getUserByEmail(
+            @PathVariable String email) {
+
+        return userService.getUserByEmail(email);
+    }
+
+    // SEARCH BY NAME
+    @GetMapping("/name/{name}")
+    public List<UserResponseDTO> getUsersByName(
+            @PathVariable String name) {
+
+        return userService.getUsersByName(name);
+    }
+
+    // PAGINATION + SORTING
+    @GetMapping("/paged")
+    public Page<UserResponseDTO> getUsersWithPagination(
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "5")
+            int size,
+
+            @RequestParam(defaultValue = "id")
+            String sortBy) {
+
+        return userService.getUsersWithPagination(
+                page,
+                size,
+                sortBy);
+    }
+
+    // ADD ADDRESS TO USER
+    @PostMapping("/{userId}/addresses")
+    public Address addAddress(
+            @PathVariable Integer userId,
+            @RequestBody Address address) {
+
+        return userService.addAddress(
+                userId,
+                address);
+    }
+
+    @GetMapping("/{id}/addresses")
+    public List<Address> getUserAddresses(
+            @PathVariable Integer id) {
+
+        return userService.getUserAddresses(id);
     }
 }

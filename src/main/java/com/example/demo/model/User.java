@@ -1,35 +1,42 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+
+import java.util.List;
 
 @Entity
+@Table(name = "user")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotBlank(message = "Name is required")
     private String name;
 
-    @Email(message = "Invalid email format")
-    @NotBlank(message = "Email is required")
     private String email;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    @JsonManagedReference
+    private List<Address> addresses;
 
     public User() {
     }
 
-    public User(String name, String email) {
-        this.name = name;
-        this.email = email;
-    }
+    public User(Integer id,
+                String name,
+                String email,
+                List<Address> addresses) {
 
-    public User(Integer id, String name, String email) {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.addresses = addresses;
     }
 
     public Integer getId() {
@@ -54,5 +61,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
     }
 }
