@@ -1,156 +1,729 @@
-# 🚀 Spring Boot REST API Project
+# Spring Boot REST API Learning Journey
 
-A simple REST API built using Spring Boot demonstrating CRUD operations with in-memory storage.
+## Project Overview
 
----
+This project was built step-by-step to learn Spring Boot backend development using:
 
-# 📁 Folder Structure
-
-src/main/java/com/example/demo
-
-- DemoApplication.java
-
-- controller/
-  - UserController.java
-
-- model/
-  - User.java
-
-- service/ (optional - for business logic)
-
-- repository/ (optional - for database layer)
-
-src/main/resources
-
-- application.properties
+* Spring Boot
+* Spring Web
+* Spring Data JPA
+* MySQL
+* Hibernate
+* REST APIs
 
 ---
 
-# 🧠 Project Overview
+# Folder Structure
 
-This project demonstrates how a REST API works using Spring Boot with a simple architecture.
+```text
+src
+└── main
+    └── java
+        └── com.example.demo
 
-It includes:
+            ├── controller
+            │   └── UserController.java
 
-- REST Controller for handling HTTP requests
-- Model class for representing data
-- In-memory list to store data (no database)
-- CRUD operations (Create, Read, Update, Delete)
+            ├── service
+            │   └── UserService.java
 
----
+            ├── repository
+            │   ├── UserRepository.java
+            │   ├── AddressRepository.java
+            │   ├── ProfileRepository.java
+            │   └── RoleRepository.java
 
-# 🏗️ Architecture (Concept)
+            ├── model
+            │   ├── User.java
+            │   ├── Address.java
+            │   ├── Profile.java
+            │   └── Role.java
 
-Client → Controller → Service (optional) → Repository (future DB) → Model
+            ├── dto
+            │   ├── UserRequestDTO.java
+            │   ├── UserResponseDTO.java
+            │   └── AddressDTO.java
 
----
+            ├── exception
+            │   ├── UserNotFoundException.java
+            │   └── GlobalExceptionHandler.java
 
-# 🔌 API Endpoints
+            └── DemoApplication.java
 
-| Operation | Method | Endpoint |
-|----------|--------|----------|
-| Create User | POST | /users |
-| Get Users | GET | /users |
-| Update User | PUT | /users/{id} |
-| Delete User | DELETE | /users/{id} |
-
----
-
-# 🧩 Key Concepts
-
-## 1. Controller
-Handles all incoming HTTP requests and sends responses.
-
-## 2. Model
-Represents the data structure (User object).
-
-## 3. REST API
-Uses HTTP methods to perform operations on resources.
-
-## 4. In-Memory Storage
-Data is stored temporarily using a list (no database used).
+resources
+└── application.properties
+```
 
 ---
 
-# 🛠️ Technologies Used
+# Architecture
 
-- Java
-- Spring Boot
-- Spring Web
-- Maven
-
----
-
-# ▶️ How to Run
-
-## Step 1: Build Project
-Use Maven to build the project.
-
-## Step 2: Run Application
-Start the Spring Boot application using Maven or your IDE.
-
-## Step 3: Access Application
-The server will start at:
-http://localhost:8080
+```text
+Client
+   ↓
+Controller
+   ↓
+Service
+   ↓
+Repository
+   ↓
+Database (MySQL)
+```
 
 ---
 
-# 🧪 How to Test APIs
-
-You can test APIs using:
-
-- Postman
-- Browser (for GET requests)
-- cURL
-- IntelliJ HTTP client
+# Topics Learned
 
 ---
 
-# 📌 Important Annotations
+## 1. REST API Basics
 
-- @RestController → Defines REST API controller
-- @RequestMapping → Base URL mapping
-- @GetMapping → Read data
-- @PostMapping → Create data
-- @PutMapping → Update data
-- @DeleteMapping → Delete data
-- @RequestBody → Reads JSON request body
-- @PathVariable → Reads URL parameters
+Created CRUD APIs.
+
+### GET
+
+```http
+GET /users
+```
+
+Fetch all users.
+
+### POST
+
+```http
+POST /users
+```
+
+Create user.
+
+### PUT
+
+```http
+PUT /users/{id}
+```
+
+Update user.
+
+### DELETE
+
+```http
+DELETE /users/{id}
+```
+
+Delete user.
 
 ---
 
-# 🚀 Future Improvements
+## 2. Service Layer
 
-- Add Spring Data JPA
-- Connect MySQL/PostgreSQL database
-- Add Service layer
-- Add Exception handling
-- Add Validation
-- Add Swagger API documentation
-- Add JWT Authentication
+Purpose:
+
+```text
+Controller
+   ↓
+Business Logic
+   ↓
+Repository
+```
+
+Responsibilities:
+
+* Validation
+* Business rules
+* Data transformation
+* Calling repositories
 
 ---
 
-# 🎯 Quick Revision Summary
+## 3. Repository Layer
 
-- Controller → Handles API requests
-- Model → Data representation
-- Service → Business logic (optional)
-- Repository → Database layer (future)
-- CRUD → Core operations of REST API
-  # GET method 
-<img width="619" height="322" alt="image" src="https://github.com/user-attachments/assets/486b19db-4e74-4c0a-a628-a947def9daf2" />
+Used:
 
-  # POST method 
-adding users , one by one 
-<img width="543" height="473" alt="image" src="https://github.com/user-attachments/assets/6e0ae0e8-3647-43a0-b62f-78dcad5916ff" />
+```java
+JpaRepository<User, Integer>
+```
 
-  # PUT method 
-the 1 user is updated into the " kumar anna "
-<img width="834" height="569" alt="Screenshot 2026-06-03 150347" src="https://github.com/user-attachments/assets/6cdcc3c5-eaff-4ebc-b61f-12122190d3ca" />
-<img width="569" height="428" alt="image" src="https://github.com/user-attachments/assets/659e9144-8967-4127-ac8d-1b558d18a859" />
+Benefits:
 
- 
+* save()
+* findById()
+* findAll()
+* delete()
 
+No SQL required for basic operations.
 
+---
 
+## 4. MySQL Integration
+
+Added dependencies:
+
+* spring-boot-starter-data-jpa
+* mysql-connector-j
+
+Configured:
+
+```properties
+spring.datasource.url
+spring.datasource.username
+spring.datasource.password
+```
+
+Hibernate automatically created tables.
+
+---
+
+## 5. DTO Pattern
+
+### Problem
+
+Never expose Entity directly.
+
+### Solution
+
+Request DTO
+
+```text
+Client → DTO → Service
+```
+
+Response DTO
+
+```text
+Entity → DTO → Client
+```
+
+Files:
+
+```text
+UserRequestDTO
+UserResponseDTO
+```
+
+Benefits:
+
+* Security
+* Cleaner API contracts
+* Flexibility
+
+---
+
+## 6. Validation
+
+Used:
+
+```java
+@NotBlank
+@Email
+```
+
+Example:
+
+```java
+@NotBlank(message="Name is required")
+private String name;
+```
+
+Controller:
+
+```java
+@Valid @RequestBody UserRequestDTO dto
+```
+
+Benefits:
+
+* Input validation
+* Automatic error handling
+
+---
+
+## 7. Global Exception Handling
+
+Created:
+
+```java
+UserNotFoundException
+```
+
+Handled using:
+
+```java
+@RestControllerAdvice
+```
+
+Benefits:
+
+```text
+Centralized Error Handling
+```
+
+Example:
+
+```json
+{
+  "message": "User not found"
+}
+```
+
+---
+
+## 8. Custom Queries
+
+Repository methods:
+
+```java
+findByEmail(String email)
+```
+
+```java
+findByName(String name)
+```
+
+Spring automatically generates SQL.
+
+---
+
+## 9. Pagination
+
+Purpose:
+
+Avoid loading huge datasets.
+
+Example:
+
+```http
+GET /users/paginated?page=0&size=5
+```
+
+Implementation:
+
+```java
+PageRequest.of(page,size)
+```
+
+Benefits:
+
+* Better performance
+* Scalable APIs
+
+---
+
+## 10. Sorting
+
+Example:
+
+```http
+GET /users/paginated?page=0&size=5&sortBy=name
+```
+
+Implementation:
+
+```java
+Sort.by("name")
+```
+
+---
+
+# JPA Relationships
+
+---
+
+## 11. One-To-Many Relationship
+
+### User → Addresses
+
+One User can have many Addresses.
+
+```text
+User
+ ├── Address 1
+ ├── Address 2
+ └── Address 3
+```
+
+Implementation:
+
+```java
+@OneToMany
+```
+
+---
+
+## 12. Many-To-One Relationship
+
+### Address → User
+
+Many addresses belong to one user.
+
+```java
+@ManyToOne
+```
+
+Database:
+
+```text
+address
+   ↓
+user_id
+```
+
+---
+
+## 13. Foreign Key
+
+Database:
+
+```text
+address.user_id
+```
+
+Purpose:
+
+Link address to user.
+
+---
+
+## 14. Bidirectional Mapping
+
+Navigation from both sides.
+
+```text
+User → Address
+
+Address → User
+```
+
+Annotations:
+
+```java
+@OneToMany
+@ManyToOne
+```
+
+---
+
+## 15. JSON Infinite Recursion Fix
+
+Problem:
+
+```text
+User
+ ↓
+Address
+ ↓
+User
+ ↓
+Address
+```
+
+Infinite loop.
+
+Solution:
+
+```java
+@JsonManagedReference
+```
+
+```java
+@JsonBackReference
+```
+
+---
+
+## 16. Lazy Loading
+
+Used:
+
+```java
+fetch = FetchType.LAZY
+```
+
+Benefits:
+
+* Better performance
+* Loads child entities only when needed
+
+---
+
+## 17. Cascade Types
+
+Purpose:
+
+Automatically propagate operations.
+
+```java
+cascade = CascadeType.ALL
+```
+
+Includes:
+
+```text
+PERSIST
+MERGE
+REMOVE
+REFRESH
+DETACH
+```
+
+Example:
+
+```text
+Save User
+      ↓
+Save Addresses
+```
+
+Automatically.
+
+---
+
+## 18. Orphan Removal
+
+Used:
+
+```java
+orphanRemoval = true
+```
+
+Meaning:
+
+```text
+Remove Address from User
+           ↓
+Delete Address from DB
+```
+
+---
+
+## 19. One-To-One Relationship
+
+### User ↔ Profile
+
+```text
+User
+  ↔
+Profile
+```
+
+One user has one profile.
+
+Annotations:
+
+```java
+@OneToOne
+@JoinColumn
+```
+
+Database:
+
+```text
+profile.user_id
+```
+
+---
+
+## 20. Many-To-Many Relationship
+
+### User ↔ Role
+
+```text
+User
+  ↔
+Role
+```
+
+Examples:
+
+```text
+Ravi → ADMIN
+Ravi → USER
+```
+
+Role can belong to many users.
+
+Implementation:
+
+```java
+@ManyToMany
+@JoinTable
+```
+
+Join Table:
+
+```text
+user_role
+```
+
+Structure:
+
+```text
+user_id
+role_id
+```
+
+---
+
+# Hibernate Concepts Learned
+
+---
+
+## Entity
+
+```java
+@Entity
+```
+
+Represents database table.
+
+---
+
+## Primary Key
+
+```java
+@Id
+@GeneratedValue
+```
+
+Auto-generated IDs.
+
+---
+
+## Table Mapping
+
+```java
+@Table(name="user")
+```
+
+Maps class to table.
+
+---
+
+## Column Mapping
+
+```java
+@Column
+```
+
+Maps fields to columns.
+
+---
+
+# APIs Implemented
+
+## User APIs
+
+```http
+GET    /users
+GET    /users/{id}
+POST   /users
+PUT    /users/{id}
+DELETE /users/{id}
+```
+
+---
+
+## Search APIs
+
+```http
+GET /users/email/{email}
+GET /users/name/{name}
+```
+
+---
+
+## Pagination
+
+```http
+GET /users/paginated
+```
+
+---
+
+## Address APIs
+
+```http
+POST /users/{userId}/addresses
+GET  /users/{userId}/addresses
+```
+
+---
+
+## Profile APIs
+
+```http
+POST /users/{userId}/profile
+GET  /users/{userId}/profile
+```
+
+---
+
+## Role APIs
+
+```http
+POST /users/roles
+POST /users/{userId}/roles/{roleId}
+```
+
+---
+
+# Database Tables
+
+```text
+user
+address
+profile
+role
+user_role
+```
+
+---
+
+# Learning Progress
+
+Completed:
+
+```text
+✅ REST APIs
+✅ Controller Layer
+✅ Service Layer
+✅ Repository Layer
+✅ MySQL Integration
+✅ Spring Data JPA
+✅ DTO Pattern
+✅ Validation
+✅ Exception Handling
+✅ Pagination
+✅ Sorting
+✅ Custom Queries
+✅ One-To-Many
+✅ Many-To-One
+✅ One-To-One
+✅ Many-To-Many
+✅ Cascade Types
+✅ Lazy Loading
+✅ Foreign Keys
+✅ Hibernate Mappings
+```
+
+---
+
+# Recommended Next Topics
+
+1. Spring Security
+2. JWT Authentication
+3. Role Based Authorization
+4. Audit Fields (createdAt, updatedAt)
+5. Lombok
+6. Swagger / OpenAPI
+7. Unit Testing (JUnit + Mockito)
+8. Docker
+9. Spring Profiles
+10. Microservices
+
+The next topic should be:
+
+```text
+Spring Security + JWT Authentication
+```
+
+because it builds directly on the User ↔ Role relationship already implemented.
