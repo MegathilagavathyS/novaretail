@@ -3,8 +3,13 @@ package com.example.demo.controller;
 import com.example.demo.dto.UserRequestDTO;
 import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.model.Address;
+import com.example.demo.model.Profile;
+import com.example.demo.model.Role;
+import com.example.demo.model.User;
 import com.example.demo.service.UserService;
+
 import jakarta.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -111,4 +116,39 @@ public class UserController {
 
         return userService.getUserAddresses(id);
     }
+
+    @GetMapping("/{userId}/profile")
+    public Profile getProfile(
+            @PathVariable Integer userId) {
+
+        return userService.getProfileByUserId(userId);
+    }
+
+    @PostMapping("/{userId}/profile")
+    public Profile addProfile(
+            @PathVariable Integer userId,
+            @RequestBody Profile profile) {
+
+        return userService.addProfile(
+                userId,
+                profile);
+    }
+
+    @PostMapping("/roles")
+    public Role createRole(
+            @RequestParam String roleName) {
+
+        return userService.createRole(roleName);
+    }
+
+    @PostMapping("/{userId}/roles/{roleId}")
+    public User assignRole(
+            @PathVariable Integer userId,
+            @PathVariable Integer roleId) {
+
+        return userService.assignRoleToUser(
+                userId,
+                roleId);
+    }
+
 }
