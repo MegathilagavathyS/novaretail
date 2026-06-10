@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import java.util.HashSet;
 import java.util.Set;
 
+
 import java.util.List;
 
 @Entity
@@ -22,7 +23,7 @@ public class User {
     private String name;
 
     private String email;
-
+    private String password;
     @OneToMany(
             mappedBy = "user",
             cascade = CascadeType.ALL,
@@ -114,4 +115,11 @@ public class User {
         this.roles = roles;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

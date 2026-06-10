@@ -10,22 +10,15 @@ public class UserRequestDTO {
     @NotBlank(message = "Name is required")
     private String name;
 
-    @Email(message = "Invalid email")
+    @Email(message = "Invalid email format")
     private String email;
+
+    @NotBlank(message = "Password is required")
+    private String password;
 
     private List<AddressDTO> addresses;
 
     public UserRequestDTO() {
-    }
-
-    public UserRequestDTO(
-            String name,
-            String email,
-            List<AddressDTO> addresses) {
-
-        this.name = name;
-        this.email = email;
-        this.addresses = addresses;
     }
 
     public String getName() {
@@ -44,13 +37,19 @@ public class UserRequestDTO {
         this.email = email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public List<AddressDTO> getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(
-            List<AddressDTO> addresses) {
-
+    public void setAddresses(List<AddressDTO> addresses) {
         this.addresses = addresses;
     }
 }

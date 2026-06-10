@@ -13,9 +13,11 @@ import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 
 import org.springframework.data.domain.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class UserService {
 
@@ -23,17 +25,20 @@ public class UserService {
     private final AddressRepository addressRepository;
     private final ProfileRepository profileRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserService(
             UserRepository userRepository,
             AddressRepository addressRepository,
             ProfileRepository profileRepository,
-            RoleRepository roleRepository) {
+            RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder) {
 
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.profileRepository = profileRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // ENTITY -> DTO
@@ -73,6 +78,16 @@ public class UserService {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
 
+        if (dto.getPassword() != null &&
+                !dto.getPassword().isBlank()) {
+
+            user.setPassword(
+                    passwordEncoder.encode(
+                            dto.getPassword()
+                    )
+            );
+        }
+
         if (dto.getAddresses() != null) {
 
             List<Address> addresses =
@@ -90,7 +105,8 @@ public class UserService {
 
                                 return address;
 
-                            }).toList();
+                            })
+                            .toList();
 
             user.setAddresses(addresses);
         }
@@ -112,7 +128,18 @@ public class UserService {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
 
-        User updatedUser = userRepository.save(user);
+        if (dto.getPassword() != null &&
+                !dto.getPassword().isBlank()) {
+
+            user.setPassword(
+                    passwordEncoder.encode(
+                            dto.getPassword()
+                    )
+            );
+        }
+
+        User updatedUser =
+                userRepository.save(user);
 
         return mapToResponseDTO(updatedUser);
     }
@@ -130,7 +157,8 @@ public class UserService {
     }
 
     // FIND USER BY EMAIL
-    public UserResponseDTO getUserByEmail(String email) {
+    public UserResponseDTO getUserByEmail(
+            String email) {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
@@ -141,11 +169,14 @@ public class UserService {
     }
 
     // FIND USERS BY NAME
-    public List<UserResponseDTO> getUsersByName(String name) {
+    public List<UserResponseDTO> getUsersByName(
+            String name) {
 
-        List<User> users = userRepository.findByName(name);
+        List<User> users =
+                userRepository.findByName(name);
 
         if (users.isEmpty()) {
+
             throw new UserNotFoundException(
                     "No users found with name: " + name);
         }
@@ -187,7 +218,7 @@ public class UserService {
         return addressRepository.save(address);
     }
 
-    // GET ALL ADDRESSES OF A USER
+    // GET USER ADDRESSES
     public List<Address> getUserAddresses(
             Integer userId) {
 
@@ -198,7 +229,7 @@ public class UserService {
         return user.getAddresses();
     }
 
-    // ADD PROFILE TO USER
+    // ADD PROFILE
     public Profile addProfile(
             Integer userId,
             Profile profile) {
@@ -212,27 +243,20 @@ public class UserService {
         return profileRepository.save(profile);
     }
 
-    // GET PROFILE OF USER
-//    public Profile getUserProfile(
-//            Integer userId) {
-//
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() ->
-//                        new UserNotFoundException("User not found"));
-//
-//        return user.getProfile();
-//    }
-    public Profile getProfileByUserId(Integer userId) {
+    // GET PROFILE
+    public Profile getProfileByUserId(
+            Integer userId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
-                        new UserNotFoundException(
-                                "User not found"));
+                        new UserNotFoundException("User not found"));
 
         return user.getProfile();
     }
 
-    public Role createRole(String roleName) {
+    // CREATE ROLE
+    public Role createRole(
+            String roleName) {
 
         Role role = new Role();
 
@@ -241,19 +265,18 @@ public class UserService {
         return roleRepository.save(role);
     }
 
+    // ASSIGN ROLE
     public User assignRoleToUser(
             Integer userId,
             Integer roleId) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
-                        new UserNotFoundException(
-                                "User not found"));
+                        new UserNotFoundException("User not found"));
 
         Role role = roleRepository.findById(roleId)
                 .orElseThrow(() ->
-                        new RuntimeException(
-                                "Role not found"));
+                        new RuntimeException("Role not found"));
 
         user.getRoles().add(role);
 
