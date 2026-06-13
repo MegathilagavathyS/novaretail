@@ -17,10 +17,11 @@ public class Order {
 
     private LocalDateTime orderDate;
 
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private Double totalAmount;
+    //private Double totalAmount;
+    private String status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -30,8 +31,7 @@ public class Order {
             orphanRemoval = true
     )
     @JsonManagedReference
-    private List<OrderItem> items =
-            new ArrayList<>();
+    private List<OrderItem> items = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -50,13 +50,13 @@ public class Order {
         this.orderDate = orderDate;
     }
 
-    public OrderStatus getStatus() {
-        return status;
+    public Double getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setStatus(
-            OrderStatus status) {
-        this.status = status;
+    public void setTotalAmount(
+            Double totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public User getUser() {
@@ -75,5 +75,13 @@ public class Order {
     public void setItems(
             List<OrderItem> items) {
         this.items = items;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
