@@ -8,6 +8,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import java.util.List;
@@ -32,6 +34,12 @@ public class User {
     )
     @JsonManagedReference
     private List<Address> addresses;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL
+    )
+    private List<Order> orders = new ArrayList<>();
 
     @OneToOne(
             mappedBy = "user",
