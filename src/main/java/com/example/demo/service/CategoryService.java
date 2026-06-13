@@ -17,23 +17,23 @@ public class CategoryService {
         this.repository = repository;
     }
 
+    // CREATE
     public Category createCategory(
             Category category) {
 
         return repository.save(category);
     }
 
+    // GET ALL
     public List<Category> getAllCategories() {
 
         return repository.findAll();
     }
 
-    public Category getCategoryById(
+    // DELETE
+    public void deleteCategory(
             Integer id) {
 
-        return repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Category not found"));
+        repository.deleteById(id);
     }
 }

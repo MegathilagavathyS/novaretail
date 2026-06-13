@@ -4,6 +4,8 @@ import com.example.demo.dto.ProductRequestDTO;
 import com.example.demo.dto.ProductResponseDTO;
 import com.example.demo.model.Product;
 import com.example.demo.service.ProductService;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,47 +14,36 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
 
-    private final ProductService service;
+    private final ProductService productService;
 
     public ProductController(
-            ProductService service) {
+            ProductService productService) {
 
-        this.service = service;
+        this.productService = productService;
     }
 
+    // ADMIN ONLY
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ProductResponseDTO createProduct(
             @RequestBody ProductRequestDTO dto) {
 
-        return service.createProduct(dto);
+        return productService.createProduct(dto);
     }
 
+    // EVERY LOGGED-IN USER
     @GetMapping
     public List<ProductResponseDTO> getAllProducts() {
 
-        return service.getAllProducts();
+        return productService.getAllProducts();
     }
 
-    @GetMapping("/{id}")
-    public ProductResponseDTO getProductById(
-            @PathVariable Integer id) {
-
-        return service.getProductById(id);
-    }
-
-    @DeleteMapping("/{id}")
-    public String deleteProduct(
-            @PathVariable Integer id) {
-
-        service.deleteProduct(id);
-
-        return "Product deleted successfully";
-    }
-
+    // EVERY LOGGED-IN USER
     @GetMapping("/category/{categoryId}")
     public List<Product> getProductsByCategory(
             @PathVariable Integer categoryId) {
 
-        return service.getProductsByCategory(categoryId);
+        return productService
+                .getProductsByCategory(categoryId);
     }
 }
