@@ -1,8 +1,9 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,6 +15,7 @@ public class Cart {
 
     @OneToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @OneToMany(
@@ -21,10 +23,11 @@ public class Cart {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JsonManagedReference
-    private List<CartItem> items;
+    private List<CartItem> items =
+            new ArrayList<>();
 
-    public Cart() {}
+    public Cart() {
+    }
 
     public Integer getId() {
         return id;
@@ -34,7 +37,8 @@ public class Cart {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(
+            User user) {
         this.user = user;
     }
 
@@ -42,7 +46,8 @@ public class Cart {
         return items;
     }
 
-    public void setItems(List<CartItem> items) {
+    public void setItems(
+            List<CartItem> items) {
         this.items = items;
     }
 }

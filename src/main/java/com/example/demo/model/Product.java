@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -27,19 +28,23 @@ public class Product {
     @JsonBackReference
     private Category category;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "product",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<CartItem> cartItems = new ArrayList<>();
+    private List<CartItem> cartItems =
+            new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "product",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<OrderItem> orderItems = new ArrayList<>();
+    private List<OrderItem> orderItems =
+            new ArrayList<>();
 
     public Product() {
     }
@@ -72,7 +77,8 @@ public class Product {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(
+            String name) {
         this.name = name;
     }
 
