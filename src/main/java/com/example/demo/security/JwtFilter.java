@@ -1,5 +1,7 @@
 package com.example.demo.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -52,38 +54,50 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token =
-                authHeader.substring(7);
+        try {
 
-        String email =
-                jwtUtil.extractEmail(token);
-        System.out.println("JWT Email: " + email);
+            String token =
+                    authHeader.substring(7);
 
-        if (email != null &&
-                SecurityContextHolder
-                        .getContext()
-                        .getAuthentication() == null) {
+            String email =
+                    jwtUtil.extractEmail(token);
 
-            UserDetails userDetails =
-                    userDetailsService
-                            .loadUserByUsername(email);
+            if (email != null &&
+                    SecurityContextHolder
+                            .getContext()
+                            .getAuthentication() == null) {
 
-            if (jwtUtil.validateToken(token)) {
+                UserDetails userDetails =
+                        userDetailsService
+                                .loadUserByUsername(email);
 
-                System.out.println("Token Valid");
+                if (jwtUtil.validateToken(token)) {
 
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities());
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities());
 
-                SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(auth);
+                    auth.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request));
 
-                System.out.println("Authentication Set");
+                    SecurityContextHolder
+                            .getContext()
+                            .setAuthentication(auth);
+                }
             }
+
+        } catch (ExpiredJwtException ex) {
+
+            response.setStatus(
+                    HttpServletResponse.SC_UNAUTHORIZED);
+
+            response.getWriter().write(
+                    "JWT Token Expired");
+
+            return;
         }
 
         filterChain.doFilter(request, response);

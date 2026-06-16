@@ -26,14 +26,14 @@ public class UserController {
     }
 
     // GET ALL USERS
-    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping
     public List<UserResponseDTO> getUsers() {
         return userService.getAllUsers();
     }
 
     // GET USER BY ID
-    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/{id}")
     public UserResponseDTO getUserById(
             @PathVariable Integer id) {
@@ -42,7 +42,7 @@ public class UserController {
     }
 
     // CREATE USER
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public UserResponseDTO addUser(
             @Valid @RequestBody UserRequestDTO dto) {
@@ -51,7 +51,7 @@ public class UserController {
     }
 
     // UPDATE USER
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public UserResponseDTO updateUser(
             @PathVariable Integer id,
@@ -61,7 +61,7 @@ public class UserController {
     }
 
     // DELETE USER
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public String deleteUser(
             @PathVariable Integer id) {
@@ -155,5 +155,6 @@ public class UserController {
                 userId,
                 roleId);
     }
+
 
 }
