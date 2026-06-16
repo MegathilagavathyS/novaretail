@@ -6,6 +6,8 @@ import com.example.demo.model.Category;
 import com.example.demo.model.Product;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.ProductRepository;
+
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +33,8 @@ public class ProductService {
                 categoryRepository.findById(
                                 dto.getCategoryId())
                         .orElseThrow(() ->
-                                new RuntimeException("Category not found"));
+                                new RuntimeException(
+                                        "Category not found"));
 
         Product product = new Product();
 
@@ -61,7 +64,8 @@ public class ProductService {
         Product product =
                 productRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException("Product not found"));
+                                new RuntimeException(
+                                        "Product not found"));
 
         return map(product);
     }
@@ -72,7 +76,8 @@ public class ProductService {
         Product product =
                 productRepository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException("Product not found"));
+                                new RuntimeException(
+                                        "Product not found"));
 
         productRepository.delete(product);
     }
@@ -82,6 +87,31 @@ public class ProductService {
 
         return productRepository
                 .findByCategoryId(categoryId);
+    }
+
+    public List<Product> searchProducts(
+            String keyword) {
+
+        return productRepository
+                .findByNameContainingIgnoreCase(
+                        keyword);
+    }
+
+    public List<Product> filterProducts(
+            Double minPrice,
+            Double maxPrice) {
+
+        return productRepository
+                .findByPriceBetween(
+                        minPrice,
+                        maxPrice);
+    }
+
+    public List<Product> sortProducts(
+            String field) {
+
+        return productRepository.findAll(
+                Sort.by(field));
     }
 
     private ProductResponseDTO map(

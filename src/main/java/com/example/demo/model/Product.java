@@ -46,6 +46,13 @@ public class Product {
     private List<OrderItem> orderItems =
             new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL
+    )
+    @JsonIgnore
+    private List<Wishlist> wishlists;
+
     public Product() {
     }
 
@@ -134,5 +141,15 @@ public class Product {
     public void setOrderItems(
             List<OrderItem> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public List<Wishlist> getWishlists() {
+        return wishlists;
+    }
+
+    public void setWishlists(
+            List<Wishlist> wishlists) {
+
+        this.wishlists = wishlists;
     }
 }

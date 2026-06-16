@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 //import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.JoinTable;
@@ -41,6 +42,13 @@ public class User {
             cascade = CascadeType.ALL
     )
     private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL
+    )
+    @JsonIgnore
+    private List<Wishlist> wishlists;
 
     @OneToOne(
             mappedBy = "user",
@@ -140,5 +148,15 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public List<Wishlist> getWishlists() {
+        return wishlists;
+    }
+
+    public void setWishlists(
+            List<Wishlist> wishlists) {
+
+        this.wishlists = wishlists;
     }
 }

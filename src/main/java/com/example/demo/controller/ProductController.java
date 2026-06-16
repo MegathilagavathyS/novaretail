@@ -22,7 +22,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-    // ADMIN ONLY
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ProductResponseDTO createProduct(
@@ -31,19 +30,44 @@ public class ProductController {
         return productService.createProduct(dto);
     }
 
-    // EVERY LOGGED-IN USER
     @GetMapping
     public List<ProductResponseDTO> getAllProducts() {
 
         return productService.getAllProducts();
     }
 
-    // EVERY LOGGED-IN USER
     @GetMapping("/category/{categoryId}")
     public List<Product> getProductsByCategory(
             @PathVariable Integer categoryId) {
 
         return productService
                 .getProductsByCategory(categoryId);
+    }
+
+    @GetMapping("/search")
+    public List<Product> searchProducts(
+            @RequestParam String keyword) {
+
+        return productService
+                .searchProducts(keyword);
+    }
+
+    @GetMapping("/filter")
+    public List<Product> filterProducts(
+            @RequestParam Double minPrice,
+            @RequestParam Double maxPrice) {
+
+        return productService
+                .filterProducts(
+                        minPrice,
+                        maxPrice);
+    }
+
+    @GetMapping("/sort")
+    public List<Product> sortProducts(
+            @RequestParam String field) {
+
+        return productService
+                .sortProducts(field);
     }
 }
