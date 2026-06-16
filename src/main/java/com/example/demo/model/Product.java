@@ -28,21 +28,23 @@ public class Product {
     @JsonBackReference
     private Category category;
 
-    @JsonIgnore
+
     @OneToMany(
             mappedBy = "product",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @JsonIgnore
     private List<CartItem> cartItems =
             new ArrayList<>();
 
-    @JsonIgnore
+
     @OneToMany(
             mappedBy = "product",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @JsonIgnore
     private List<OrderItem> orderItems =
             new ArrayList<>();
 
@@ -52,6 +54,15 @@ public class Product {
     )
     @JsonIgnore
     private List<Wishlist> wishlists;
+
+    @JsonIgnore
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<InventoryHistory> inventoryHistory =
+            new ArrayList<>();
 
     public Product() {
     }
@@ -151,5 +162,15 @@ public class Product {
             List<Wishlist> wishlists) {
 
         this.wishlists = wishlists;
+    }
+
+    public List<InventoryHistory> getInventoryHistory() {
+        return inventoryHistory;
+    }
+
+    public void setInventoryHistory(
+            List<InventoryHistory> inventoryHistory) {
+
+        this.inventoryHistory = inventoryHistory;
     }
 }
