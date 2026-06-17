@@ -4,7 +4,8 @@ import io.jsonwebtoken.ExpiredJwtException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.
         UsernamePasswordAuthenticationToken;
@@ -38,6 +39,16 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(
+            HttpServletRequest request) {
+
+        String path =
+                request.getServletPath();
+
+        return path.startsWith("/auth");
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -50,7 +61,10 @@ public class JwtFilter extends OncePerRequestFilter {
         if (authHeader == null ||
                 !authHeader.startsWith("Bearer ")) {
 
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(
+                    request,
+                    response);
+
             return;
         }
 
@@ -98,8 +112,20 @@ public class JwtFilter extends OncePerRequestFilter {
                     "JWT Token Expired");
 
             return;
+
+        } catch (Exception ex) {
+
+            response.setStatus(
+                    HttpServletResponse.SC_UNAUTHORIZED);
+
+            response.getWriter().write(
+                    "Invalid JWT Token");
+
+            return;
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(
+                request,
+                response);
     }
 }
