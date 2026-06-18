@@ -8,7 +8,9 @@ public class ProductResponseDTO {
     private Double price;
     private Integer stock;
     private String categoryName;
+    private Double averageRating;
 
+    private Integer reviewCount;
     public ProductResponseDTO() {
     }
 
@@ -18,7 +20,9 @@ public class ProductResponseDTO {
             String description,
             Double price,
             Integer stock,
-            String categoryName) {
+            String categoryName,
+            Double averageRating,
+            Integer reviewCount) {
 
         this.id = id;
         this.name = name;
@@ -26,6 +30,8 @@ public class ProductResponseDTO {
         this.price = price;
         this.stock = stock;
         this.categoryName = categoryName;
+        this.averageRating = averageRating;
+        this.reviewCount = reviewCount;
     }
 
     public Integer getId() {

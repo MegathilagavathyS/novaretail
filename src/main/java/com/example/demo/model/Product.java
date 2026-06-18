@@ -23,6 +23,11 @@ public class Product {
 
     private Integer stock;
 
+    private Double averageRating = 0.0;
+
+    private Integer reviewCount = 0;
+    //private Double averageRating = 0.0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     @JsonBackReference
@@ -61,8 +66,18 @@ public class Product {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+
     private List<InventoryHistory> inventoryHistory =
             new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonIgnore
+    private List<Review> reviews = new ArrayList<>();
+
+
 
     public Product() {
     }
@@ -172,5 +187,34 @@ public class Product {
             List<InventoryHistory> inventoryHistory) {
 
         this.inventoryHistory = inventoryHistory;
+    }
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(
+            List<Review> reviews) {
+
+        this.reviews = reviews;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(
+            Double averageRating) {
+
+        this.averageRating = averageRating;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(
+            Integer reviewCount) {
+
+        this.reviewCount = reviewCount;
     }
 }

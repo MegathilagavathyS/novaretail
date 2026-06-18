@@ -73,6 +73,13 @@ public class User {
     @Column(nullable = false)
     private String role;
 
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL
+    )
+    @JsonIgnore
+    private List<Review> reviews = new ArrayList<>();
+
     public User() {
     }
 
@@ -158,5 +165,14 @@ public class User {
             List<Wishlist> wishlists) {
 
         this.wishlists = wishlists;
+    }
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(
+            List<Review> reviews) {
+
+        this.reviews = reviews;
     }
 }

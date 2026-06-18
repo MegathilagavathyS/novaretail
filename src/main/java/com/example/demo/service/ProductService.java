@@ -123,7 +123,9 @@ public class ProductService {
                 product.getDescription(),
                 product.getPrice(),
                 product.getStock(),
-                product.getCategory().getName()
+                product.getCategory().getName(),
+                product.getAverageRating(),
+                product.getReviewCount()
         );
     }
 }
