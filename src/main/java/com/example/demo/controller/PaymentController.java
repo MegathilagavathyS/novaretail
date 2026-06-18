@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Payment;
 import com.example.demo.service.PaymentService;
+import com.example.demo.dto.PaymentVerificationRequest;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -32,5 +33,12 @@ public class PaymentController {
 
         return service.getPaymentByOrder(
                 orderId);
+    }
+
+    @PostMapping("/verify")
+    public String verifyPayment(
+            @RequestBody PaymentVerificationRequest request) {
+
+        return service.verifyPayment(request);
     }
 }

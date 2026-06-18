@@ -4,6 +4,7 @@ import com.example.demo.model.Order;
 import com.example.demo.model.Payment;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.PaymentRepository;
+import com.example.demo.dto.PaymentVerificationRequest;
 
 import com.razorpay.OrderClient;
 import com.razorpay.RazorpayClient;
@@ -98,5 +99,40 @@ public class PaymentService {
                 .orElseThrow(() ->
                         new RuntimeException(
                                 "Payment not found"));
+    }
+    public String verifyPayment(
+            PaymentVerificationRequest request) {
+
+        System.out.println(
+                "ORDER ID = "
+                        + request.getRazorpayOrderId());
+
+        Payment payment =
+                paymentRepository
+                        .findByRazorpayOrderId(
+                                request.getRazorpayOrderId())
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Payment not found"));
+
+        payment.setRazorpayPaymentId(
+                request.getRazorpayPaymentId());
+
+        payment.setRazorpaySignature(
+                request.getRazorpaySignature());
+
+        payment.setPaymentStatus(
+                "SUCCESS");
+
+        Order order =
+                payment.getOrder();
+
+        order.setStatus("PAID");
+
+        orderRepository.save(order);
+
+        paymentRepository.save(payment);
+
+        return "Payment Verified Successfully";
     }
 }

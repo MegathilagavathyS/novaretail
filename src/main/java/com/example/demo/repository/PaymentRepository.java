@@ -10,4 +10,7 @@ public interface PaymentRepository
 
     Optional<Payment> findByOrderId(
             Integer orderId);
+
+    Optional<Payment> findByRazorpayOrderId(
+            String razorpayOrderId);
 }

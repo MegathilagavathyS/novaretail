@@ -23,6 +23,10 @@ public class Payment {
 
     private LocalDateTime paymentDate;
 
+    private String razorpayPaymentId;
+
+    private String razorpaySignature;
+
     @OneToOne
     @JoinColumn(name = "order_id")
     @JsonIgnore
@@ -97,5 +101,27 @@ public class Payment {
             Order order) {
 
         this.order = order;
+    }
+
+    public String getRazorpayPaymentId() {
+        return razorpayPaymentId;
+    }
+
+    public void setRazorpayPaymentId(
+            String razorpayPaymentId) {
+
+        this.razorpayPaymentId =
+                razorpayPaymentId;
+    }
+
+    public String getRazorpaySignature() {
+        return razorpaySignature;
+    }
+
+    public void setRazorpaySignature(
+            String razorpaySignature) {
+
+        this.razorpaySignature =
+                razorpaySignature;
     }
 }
