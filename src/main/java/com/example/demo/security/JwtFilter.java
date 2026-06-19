@@ -25,41 +25,59 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtFilter
+        extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService userDetailsService;
+
+    private final CustomUserDetailsService
+            userDetailsService;
 
     public JwtFilter(
             JwtUtil jwtUtil,
             CustomUserDetailsService userDetailsService) {
 
         this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-    }
-
-    @Override
-    protected boolean shouldNotFilter(
-            HttpServletRequest request) {
-
-        String path =
-                request.getServletPath();
-
-        return path.startsWith("/auth");
+        this.userDetailsService =
+                userDetailsService;
     }
 
     @Override
     protected void doFilterInternal(
+
             HttpServletRequest request,
+
             HttpServletResponse response,
+
             FilterChain filterChain)
-            throws ServletException, IOException {
+
+            throws ServletException,
+            IOException {
+
+        String path =
+                request.getServletPath();
+
+        System.out.println(
+                "PATH = " + path);
+
+        // SKIP AUTH ENDPOINTS
+
+        if (path.startsWith("/auth")) {
+
+            filterChain.doFilter(
+                    request,
+                    response);
+
+            return;
+        }
 
         String authHeader =
-                request.getHeader("Authorization");
+                request.getHeader(
+                        "Authorization");
 
-        if (authHeader == null ||
-                !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null
+                || !authHeader.startsWith(
+                "Bearer ")) {
 
             filterChain.doFilter(
                     request,
@@ -73,53 +91,78 @@ public class JwtFilter extends OncePerRequestFilter {
             String token =
                     authHeader.substring(7);
 
-            String email =
-                    jwtUtil.extractEmail(token);
+            System.out.println(
+                    "TOKEN = " + token);
 
-            if (email != null &&
+            String email =
+                    jwtUtil.extractEmail(
+                            token);
+
+            System.out.println(
+                    "EMAIL = " + email);
+
+            if (email != null
+                    &&
                     SecurityContextHolder
                             .getContext()
-                            .getAuthentication() == null) {
+                            .getAuthentication()
+                            == null) {
 
                 UserDetails userDetails =
                         userDetailsService
-                                .loadUserByUsername(email);
+                                .loadUserByUsername(
+                                        email);
 
-                if (jwtUtil.validateToken(token)) {
+                if (jwtUtil.validateToken(
+                        token)) {
 
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(
+
                                     userDetails,
+
                                     null,
-                                    userDetails.getAuthorities());
+
+                                    userDetails
+                                            .getAuthorities());
 
                     auth.setDetails(
+
                             new WebAuthenticationDetailsSource()
-                                    .buildDetails(request));
+                                    .buildDetails(
+                                            request));
 
                     SecurityContextHolder
                             .getContext()
-                            .setAuthentication(auth);
+                            .setAuthentication(
+                                    auth);
                 }
             }
 
-        } catch (ExpiredJwtException ex) {
+        }
+
+        catch (ExpiredJwtException ex) {
 
             response.setStatus(
-                    HttpServletResponse.SC_UNAUTHORIZED);
+                    HttpServletResponse
+                            .SC_UNAUTHORIZED);
 
-            response.getWriter().write(
-                    "JWT Token Expired");
+            response.getWriter()
+                    .write(
+                            "JWT Token Expired");
 
             return;
+        }
 
-        } catch (Exception ex) {
+        catch (Exception ex) {
 
             response.setStatus(
-                    HttpServletResponse.SC_UNAUTHORIZED);
+                    HttpServletResponse
+                            .SC_UNAUTHORIZED);
 
-            response.getWriter().write(
-                    "Invalid JWT Token");
+            response.getWriter()
+                    .write(
+                            "Invalid JWT Token");
 
             return;
         }
@@ -128,4 +171,5 @@ public class JwtFilter extends OncePerRequestFilter {
                 request,
                 response);
     }
+
 }

@@ -20,11 +20,16 @@ public class OrderController {
         this.service = service;
     }
 
-    @PostMapping("/place/{userId}")
+    @PostMapping("/{userId}")
     public OrderResponseDTO placeOrder(
-            @PathVariable Integer userId) {
+            @PathVariable Integer userId,
 
-        return service.placeOrder(userId);
+            @RequestParam(required = false)
+            String couponCode) {
+
+        return service.placeOrder(
+                userId,
+                couponCode);
     }
 
     @GetMapping("/{userId}")

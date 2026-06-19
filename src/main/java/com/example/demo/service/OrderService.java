@@ -18,13 +18,15 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final InventoryHistoryRepository inventoryHistoryRepository;
+    private final CouponRepository couponRepository;
 
     public OrderService(
             OrderRepository orderRepository,
             UserRepository userRepository,
             CartRepository cartRepository,
             ProductRepository productRepository,
-            InventoryHistoryRepository inventoryHistoryRepository) {
+            InventoryHistoryRepository inventoryHistoryRepository,
+            CouponRepository couponRepository) {
 
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
@@ -32,11 +34,14 @@ public class OrderService {
         this.productRepository = productRepository;
         this.inventoryHistoryRepository =
                 inventoryHistoryRepository;
+        this.couponRepository =
+                couponRepository;
     }
 
     // PLACE ORDER
     public OrderResponseDTO placeOrder(
-            Integer userId) {
+            Integer userId,
+            String couponCode) {
 
         User user =
                 userRepository.findById(userId)
@@ -59,9 +64,7 @@ public class OrderService {
         Order order = new Order();
 
         order.setUser(user);
-        order.setOrderDate(
-                LocalDateTime.now());
-
+        order.setOrderDate(LocalDateTime.now());
         order.setStatus("PENDING");
 
         double totalAmount = 0.0;
@@ -129,6 +132,16 @@ public class OrderService {
                     .add(orderItem);
         }
 
+        // APPLY COUPON
+        if (couponCode != null &&
+                !couponCode.isBlank()) {
+
+            totalAmount =
+                    applyCoupon(
+                            totalAmount,
+                            couponCode);
+        }
+
         order.setTotalAmount(
                 totalAmount);
 
@@ -147,22 +160,53 @@ public class OrderService {
         );
     }
 
-    // GET ALL ORDERS OF USER
+    // GET ORDERS OF USER
     public List<Order> getOrdersByUser(
             Integer userId) {
 
-        return orderRepository
-                .findByUserId(userId);
+        return orderRepository.findByUserId(userId);
     }
 
     // GET ORDER BY ID
     public Order getOrderById(
             Integer orderId) {
 
-        return orderRepository
-                .findById(orderId)
+        return orderRepository.findById(orderId)
                 .orElseThrow(() ->
                         new RuntimeException(
                                 "Order not found"));
+    }
+
+    // APPLY COUPON
+    public Double applyCoupon(
+            Double amount,
+            String couponCode) {
+
+        Coupon coupon =
+                couponRepository
+                        .findByCode(couponCode)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Coupon not found"));
+
+        if (!coupon.getActive()) {
+
+            throw new RuntimeException(
+                    "Coupon inactive");
+        }
+
+        if (coupon.getExpiryDate()
+                .isBefore(LocalDateTime.now())) {
+
+            throw new RuntimeException(
+                    "Coupon expired");
+        }
+
+        double discount =
+                amount *
+                        coupon.getDiscountPercentage()
+                        / 100;
+
+        return amount - discount;
     }
 }
