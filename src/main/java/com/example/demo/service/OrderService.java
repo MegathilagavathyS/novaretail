@@ -65,7 +65,8 @@ public class OrderService {
 
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus("PENDING");
+        order.setStatus(
+                OrderStatus.PENDING);
 
         double totalAmount = 0.0;
 
@@ -177,6 +178,20 @@ public class OrderService {
                                 "Order not found"));
     }
 
+    public Order updateOrderStatus(
+            Integer orderId,
+            OrderStatus status) {
+
+        Order order =
+                orderRepository.findById(orderId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Order not found"));
+
+        order.setStatus(status);
+
+        return orderRepository.save(order);
+    }
     // APPLY COUPON
     public Double applyCoupon(
             Double amount,

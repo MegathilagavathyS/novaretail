@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.model.Order;
 import com.example.demo.model.Payment;
+import com.example.demo.model.OrderStatus;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.PaymentRepository;
 import com.example.demo.dto.PaymentVerificationRequest;
@@ -127,7 +128,8 @@ public class PaymentService {
         Order order =
                 payment.getOrder();
 
-        order.setStatus("PAID");
+        order.setStatus(
+                OrderStatus.PAYMENT_SUCCESS);
 
         orderRepository.save(order);
 
