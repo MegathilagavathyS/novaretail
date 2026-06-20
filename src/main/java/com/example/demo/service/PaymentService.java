@@ -104,10 +104,6 @@ public class PaymentService {
     public String verifyPayment(
             PaymentVerificationRequest request) {
 
-        System.out.println(
-                "ORDER ID = "
-                        + request.getRazorpayOrderId());
-
         Payment payment =
                 paymentRepository
                         .findByRazorpayOrderId(
@@ -128,8 +124,9 @@ public class PaymentService {
         Order order =
                 payment.getOrder();
 
+        // FIXED
         order.setStatus(
-                OrderStatus.PAYMENT_SUCCESS);
+                OrderStatus.PAID);
 
         orderRepository.save(order);
 

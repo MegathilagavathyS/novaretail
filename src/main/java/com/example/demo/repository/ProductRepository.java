@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.model.Product;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -18,6 +19,9 @@ public interface ProductRepository
     List<Product> findByPriceBetween(
             Double minPrice,
             Double maxPrice);
+
+    List<Product> findByStockLessThan(
+            Integer stock);
 
     List<Product> findAll(
             Sort sort);

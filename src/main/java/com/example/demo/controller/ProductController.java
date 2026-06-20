@@ -22,6 +22,8 @@ public class ProductController {
         this.productService = productService;
     }
 
+    // CREATE PRODUCT
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ProductResponseDTO createProduct(
@@ -30,11 +32,36 @@ public class ProductController {
         return productService.createProduct(dto);
     }
 
+    // GET ALL PRODUCTS
+
     @GetMapping
     public List<ProductResponseDTO> getAllProducts() {
 
         return productService.getAllProducts();
     }
+
+    // GET PRODUCT
+
+    @GetMapping("/{id}")
+    public ProductResponseDTO getProduct(
+            @PathVariable Integer id) {
+
+        return productService.getProductById(id);
+    }
+
+    // DELETE PRODUCT
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public String deleteProduct(
+            @PathVariable Integer id) {
+
+        productService.deleteProduct(id);
+
+        return "Product deleted";
+    }
+
+    // CATEGORY FILTER
 
     @GetMapping("/category/{categoryId}")
     public List<Product> getProductsByCategory(
@@ -44,6 +71,8 @@ public class ProductController {
                 .getProductsByCategory(categoryId);
     }
 
+    // SEARCH
+
     @GetMapping("/search")
     public List<Product> searchProducts(
             @RequestParam String keyword) {
@@ -52,16 +81,20 @@ public class ProductController {
                 .searchProducts(keyword);
     }
 
-    @GetMapping("/filter")
-    public List<Product> filterProducts(
-            @RequestParam Double minPrice,
-            @RequestParam Double maxPrice) {
+    // PRICE FILTER
+
+    @GetMapping("/price")
+    public List<Product> filterByPrice(
+
+            @RequestParam Double min,
+
+            @RequestParam Double max) {
 
         return productService
-                .filterProducts(
-                        minPrice,
-                        maxPrice);
+                .filterByPrice(min, max);
     }
+
+    // SORT
 
     @GetMapping("/sort")
     public List<Product> sortProducts(

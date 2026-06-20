@@ -38,7 +38,6 @@ public class OrderService {
                 couponRepository;
     }
 
-    // PLACE ORDER
     public OrderResponseDTO placeOrder(
             Integer userId,
             String couponCode) {
@@ -65,8 +64,7 @@ public class OrderService {
 
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus(
-                OrderStatus.PENDING);
+        order.setStatus(OrderStatus.PENDING);
 
         double totalAmount = 0.0;
 
@@ -78,7 +76,6 @@ public class OrderService {
             Integer orderedQuantity =
                     cartItem.getQuantity();
 
-            // STOCK CHECK
             if (product.getStock()
                     < orderedQuantity) {
 
@@ -87,14 +84,12 @@ public class OrderService {
                                 + product.getName());
             }
 
-            // REDUCE STOCK
             product.setStock(
                     product.getStock()
                             - orderedQuantity);
 
             productRepository.save(product);
 
-            // INVENTORY HISTORY
             InventoryHistory history =
                     new InventoryHistory();
 
@@ -133,7 +128,6 @@ public class OrderService {
                     .add(orderItem);
         }
 
-        // APPLY COUPON
         if (couponCode != null &&
                 !couponCode.isBlank()) {
 
@@ -149,7 +143,6 @@ public class OrderService {
         Order savedOrder =
                 orderRepository.save(order);
 
-        // CLEAR CART
         cart.getItems().clear();
 
         cartRepository.save(cart);
@@ -161,14 +154,12 @@ public class OrderService {
         );
     }
 
-    // GET ORDERS OF USER
     public List<Order> getOrdersByUser(
             Integer userId) {
 
         return orderRepository.findByUserId(userId);
     }
 
-    // GET ORDER BY ID
     public Order getOrderById(
             Integer orderId) {
 
@@ -178,6 +169,7 @@ public class OrderService {
                                 "Order not found"));
     }
 
+    // FIXED
     public Order updateOrderStatus(
             Integer orderId,
             OrderStatus status) {
@@ -192,7 +184,7 @@ public class OrderService {
 
         return orderRepository.save(order);
     }
-    // APPLY COUPON
+
     public Double applyCoupon(
             Double amount,
             String couponCode) {

@@ -26,6 +26,8 @@ public class ProductService {
         this.categoryRepository = categoryRepository;
     }
 
+    // CREATE PRODUCT
+
     public ProductResponseDTO createProduct(
             ProductRequestDTO dto) {
 
@@ -50,6 +52,8 @@ public class ProductService {
         return map(saved);
     }
 
+    // GET ALL PRODUCTS
+
     public List<ProductResponseDTO> getAllProducts() {
 
         return productRepository.findAll()
@@ -57,6 +61,8 @@ public class ProductService {
                 .map(this::map)
                 .toList();
     }
+
+    // GET PRODUCT BY ID
 
     public ProductResponseDTO getProductById(
             Integer id) {
@@ -70,6 +76,8 @@ public class ProductService {
         return map(product);
     }
 
+    // DELETE PRODUCT
+
     public void deleteProduct(
             Integer id) {
 
@@ -82,12 +90,16 @@ public class ProductService {
         productRepository.delete(product);
     }
 
+    // CATEGORY FILTER
+
     public List<Product> getProductsByCategory(
             Integer categoryId) {
 
         return productRepository
                 .findByCategoryId(categoryId);
     }
+
+    // SEARCH
 
     public List<Product> searchProducts(
             String keyword) {
@@ -97,15 +109,19 @@ public class ProductService {
                         keyword);
     }
 
-    public List<Product> filterProducts(
-            Double minPrice,
-            Double maxPrice) {
+    // PRICE FILTER
+
+    public List<Product> filterByPrice(
+            Double min,
+            Double max) {
 
         return productRepository
                 .findByPriceBetween(
-                        minPrice,
-                        maxPrice);
+                        min,
+                        max);
     }
+
+    // SORT
 
     public List<Product> sortProducts(
             String field) {
@@ -114,8 +130,27 @@ public class ProductService {
                 Sort.by(field));
     }
 
+    // DTO MAPPER
+
     private ProductResponseDTO map(
             Product product) {
+
+        Double averageRating = 0.0;
+        Integer reviewCount = 0;
+
+        if (product.getReviews() != null &&
+                !product.getReviews().isEmpty()) {
+
+            reviewCount =
+                    product.getReviews().size();
+
+            averageRating =
+                    product.getReviews()
+                            .stream()
+                            .mapToDouble(r -> r.getRating())
+                            .average()
+                            .orElse(0.0);
+        }
 
         return new ProductResponseDTO(
                 product.getId(),
@@ -124,8 +159,8 @@ public class ProductService {
                 product.getPrice(),
                 product.getStock(),
                 product.getCategory().getName(),
-                product.getAverageRating(),
-                product.getReviewCount()
+                averageRating,
+                reviewCount
         );
     }
 }
