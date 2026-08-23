@@ -1,729 +1,1402 @@
-# Spring Boot REST API Learning Journey
+# NovaRetail 🛒
 
-## Project Overview
+### E-Commerce Backend REST API
 
-This project was built step-by-step to learn Spring Boot backend development using:
+NovaRetail is a **Spring Boot-based E-Commerce Backend REST API** designed to simulate the core functionality of a real-world online shopping platform.
 
-* Spring Boot
-* Spring Web
-* Spring Data JPA
-* MySQL
-* Hibernate
-* REST APIs
+The project follows a layered architecture and includes authentication, product management, search and filtering, cart and wishlist functionality, inventory management, coupons, order processing, Razorpay test-mode payments, reviews and ratings, shipping addresses, order tracking, and dashboard analytics.
 
 ---
 
-# Folder Structure
+## 📌 Project Overview
+
+NovaRetail was developed to understand and implement the backend architecture of a real-world e-commerce application.
+
+The application provides REST APIs for:
+
+* User registration and login
+* JWT authentication
+* Role-based authorization
+* Category management
+* Product management
+* Product search
+* Product filtering
+* Product sorting
+* Wishlist management
+* Shopping cart
+* Inventory and stock management
+* Inventory history
+* Coupon management
+* Order placement
+* Order status management
+* Razorpay payment integration
+* Payment verification
+* Product reviews and ratings
+* Shipping addresses
+* Order tracking
+* Dashboard analytics
+
+---
+
+# 🚀 Features
+
+## 1. Authentication & Authorization
+
+NovaRetail uses **Spring Security + JWT** for authentication.
+
+### Features
+
+* User registration
+* User login
+* BCrypt password encryption
+* JWT token generation
+* JWT token validation
+* Protected APIs
+* Role-based authorization
+* ADMIN and USER roles
+
+### Authentication Flow
 
 ```text
-src
-└── main
-    └── java
-        └── com.example.demo
-
-            ├── controller
-            │   └── UserController.java
-
-            ├── service
-            │   └── UserService.java
-
-            ├── repository
-            │   ├── UserRepository.java
-            │   ├── AddressRepository.java
-            │   ├── ProfileRepository.java
-            │   └── RoleRepository.java
-
-            ├── model
-            │   ├── User.java
-            │   ├── Address.java
-            │   ├── Profile.java
-            │   └── Role.java
-
-            ├── dto
-            │   ├── UserRequestDTO.java
-            │   ├── UserResponseDTO.java
-            │   └── AddressDTO.java
-
-            ├── exception
-            │   ├── UserNotFoundException.java
-            │   └── GlobalExceptionHandler.java
-
-            └── DemoApplication.java
-
-resources
-└── application.properties
+User Login
+    ↓
+Email + Password
+    ↓
+Spring Security
+    ↓
+Password Verification
+    ↓
+JWT Token Generated
+    ↓
+Client Stores Token
+    ↓
+Authorization: Bearer <token>
+    ↓
+JwtFilter
+    ↓
+Protected API
 ```
 
 ---
 
-# Architecture
+# 2. User Management
+
+Users can register and authenticate themselves.
+
+User information includes:
 
 ```text
-Client
-   ↓
-Controller
-   ↓
-Service
-   ↓
-Repository
-   ↓
-Database (MySQL)
+id
+name
+email
+password
+role
 ```
 
----
-
-# Topics Learned
+Passwords are stored using **BCrypt hashing** rather than plain text.
 
 ---
 
-## 1. REST API Basics
+# 3. Product Management
 
-Created CRUD APIs.
+Products contain information such as:
 
-### GET
+```text
+Product ID
+Name
+Description
+Price
+Stock
+Category
+Average Rating
+Review Count
+```
+
+Admin functionality includes product management.
+
+---
+
+# 4. Product Search
+
+Users can search products by name.
+
+Example:
 
 ```http
-GET /users
+GET /products/search?name=iphone
 ```
 
-Fetch all users.
-
-### POST
-
-```http
-POST /users
-```
-
-Create user.
-
-### PUT
-
-```http
-PUT /users/{id}
-```
-
-Update user.
-
-### DELETE
-
-```http
-DELETE /users/{id}
-```
-
-Delete user.
+Search is implemented using Spring Data JPA repository methods.
 
 ---
 
-## 2. Service Layer
+# 5. Product Filtering
 
-Purpose:
+NovaRetail supports product filtering based on price.
+
+Example:
+
+```http
+GET /products/filter?minPrice=10000&maxPrice=50000
+```
+
+---
+
+# 6. Product Sorting
+
+Products can be sorted according to their price.
+
+Examples:
+
+```http
+GET /products/sort?order=asc
+```
+
+```http
+GET /products/sort?order=desc
+```
+
+---
+
+# 7. Wishlist
+
+Users can save products to their wishlist.
+
+### Operations
 
 ```text
-Controller
+Add product
+View wishlist
+Remove product
+```
+
+The project also handles bidirectional JPA relationships carefully to prevent infinite JSON recursion.
+
+---
+
+# 8. Shopping Cart
+
+Users can add products to their cart before placing an order.
+
+Typical flow:
+
+```text
+Product
    ↓
-Business Logic
+Add to Cart
    ↓
-Repository
+CartItem
+   ↓
+Cart
+   ↓
+Checkout
 ```
 
-Responsibilities:
+Cart operations include:
 
-* Validation
-* Business rules
-* Data transformation
-* Calling repositories
+* Add product
+* Update quantity
+* Remove product
+* View cart
 
 ---
 
-## 3. Repository Layer
+# 9. Inventory & Stock Management
 
-Used:
+NovaRetail maintains product stock and inventory history.
 
-```java
-JpaRepository<User, Integer>
-```
-
-Benefits:
-
-* save()
-* findById()
-* findAll()
-* delete()
-
-No SQL required for basic operations.
-
----
-
-## 4. MySQL Integration
-
-Added dependencies:
-
-* spring-boot-starter-data-jpa
-* mysql-connector-j
-
-Configured:
-
-```properties
-spring.datasource.url
-spring.datasource.username
-spring.datasource.password
-```
-
-Hibernate automatically created tables.
-
----
-
-## 5. DTO Pattern
-
-### Problem
-
-Never expose Entity directly.
-
-### Solution
-
-Request DTO
+When an order is placed:
 
 ```text
-Client → DTO → Service
-```
-
-Response DTO
-
-```text
-Entity → DTO → Client
-```
-
-Files:
-
-```text
-UserRequestDTO
-UserResponseDTO
-```
-
-Benefits:
-
-* Security
-* Cleaner API contracts
-* Flexibility
-
----
-
-## 6. Validation
-
-Used:
-
-```java
-@NotBlank
-@Email
+Available Stock
+       ↓
+Stock Validation
+       ↓
+Order Quantity
+       ↓
+Stock Reduced
+       ↓
+Inventory History Created
 ```
 
 Example:
 
-```java
-@NotBlank(message="Name is required")
-private String name;
+```text
+Stock = 20
+
+Customer orders = 3
+
+New Stock = 17
 ```
 
-Controller:
+Inventory history records actions such as:
 
-```java
-@Valid @RequestBody UserRequestDTO dto
+```text
+RESTOCK
+ORDER_PLACED
 ```
-
-Benefits:
-
-* Input validation
-* Automatic error handling
 
 ---
 
-## 7. Global Exception Handling
+# 10. Coupon Management
 
-Created:
+NovaRetail supports discount coupons.
 
-```java
-UserNotFoundException
-```
-
-Handled using:
-
-```java
-@RestControllerAdvice
-```
-
-Benefits:
+Example coupon:
 
 ```text
-Centralized Error Handling
+Code: WELCOME10
+Discount: 10%
+Active: true
+Expiry: 2026-12-31
+```
+
+Coupon validation checks:
+
+* Coupon exists
+* Coupon is active
+* Coupon has not expired
+
+Example:
+
+```http
+POST /orders/place/{userId}/{addressId}?couponCode=WELCOME10
+```
+
+---
+
+# 11. Order Management
+
+Orders are created from the user's cart.
+
+### Order Flow
+
+```text
+Cart
+ ↓
+Stock Check
+ ↓
+Inventory Update
+ ↓
+Coupon Validation
+ ↓
+Calculate Total
+ ↓
+Create Order
+ ↓
+Clear Cart
+```
+
+Order contains:
+
+```text
+Order ID
+User
+Order Date
+Total Amount
+Order Status
+Order Items
+Shipping Address
+```
+
+---
+
+# 12. Order Status System
+
+Orders use an enum-based status system.
+
+```java
+PENDING
+PAID
+CONFIRMED
+SHIPPED
+DELIVERED
+CANCELLED
+REFUNDED
+```
+
+Example workflow:
+
+```text
+PENDING
+   ↓
+PAID
+   ↓
+CONFIRMED
+   ↓
+SHIPPED
+   ↓
+DELIVERED
+```
+
+Cancellation and refund states are also supported.
+
+---
+
+# 13. Payment Integration
+
+NovaRetail integrates **Razorpay Test Mode** for payment processing.
+
+### Payment Flow
+
+```text
+Order Created
+      ↓
+Create Razorpay Order
+      ↓
+Payment Record Created
+      ↓
+PENDING
+      ↓
+Customer Completes Payment
+      ↓
+Payment Verification
+      ↓
+SUCCESS
+      ↓
+Order = PAID
+```
+
+Payment stores information such as:
+
+```text
+Payment ID
+Razorpay Order ID
+Razorpay Payment ID
+Razorpay Signature
+Amount
+Payment Status
+Payment Date
+Order
+```
+
+> Razorpay credentials must never be committed to GitHub.
+
+---
+
+# 14. Payment Verification
+
+Payment verification receives:
+
+```json
+{
+  "razorpayOrderId": "order_xxxxx",
+  "razorpayPaymentId": "pay_xxxxx",
+  "razorpaySignature": "signature_xxxxx"
+}
+```
+
+The backend identifies the payment using the Razorpay order ID and updates the payment and order status.
+
+---
+
+# 15. Reviews & Ratings
+
+Users can submit reviews for products.
+
+Review information includes:
+
+```text
+User
+Product
+Rating
+Comment
+Review Date
+```
+
+Supported functionality:
+
+* Add review
+* Get product reviews
+* Get reviews by user
+* Update review
+* Delete review
+* Calculate average rating
+
+Product information can also maintain:
+
+```text
+Average Rating
+Review Count
+```
+
+---
+
+# 16. Shipping Address
+
+Users can store multiple shipping addresses.
+
+Address contains:
+
+```text
+Address ID
+Address Line
+City
+State
+Pincode
+User
 ```
 
 Example:
 
 ```json
 {
-  "message": "User not found"
+  "addressLine": "No 18, Anna Nagar",
+  "city": "Chennai",
+  "state": "Tamil Nadu",
+  "pincode": "600040"
+}
+```
+
+Supported operations:
+
+```text
+Add Address
+Get User Addresses
+Update Address
+Delete Address
+```
+
+---
+
+# 17. Shipping Address Integration with Orders
+
+An order stores the shipping address selected during checkout.
+
+```text
+User
+ ↓
+Saved Addresses
+ ↓
+Select Address
+ ↓
+Place Order
+ ↓
+Order
+ ↓
+Shipping Address
+```
+
+This means the order retains the address associated with the shipment.
+
+---
+
+# 18. Order Tracking
+
+Order tracking is based on the order status.
+
+Example:
+
+```text
+PENDING
+   ↓
+PAID
+   ↓
+CONFIRMED
+   ↓
+SHIPPED
+   ↓
+DELIVERED
+```
+
+The current order status can be retrieved using the order API.
+
+---
+
+# 19. Dashboard Analytics
+
+NovaRetail includes dashboard APIs for basic business analytics.
+
+### Dashboard Metrics
+
+```text
+Total Users
+Total Products
+Total Orders
+Total Revenue
+```
+
+Example:
+
+```http
+GET /dashboard
+```
+
+Response:
+
+```json
+{
+  "totalUsers": 12,
+  "totalProducts": 10,
+  "totalOrders": 8,
+  "totalRevenue": 1961978.2
 }
 ```
 
 ---
 
-## 8. Custom Queries
-
-Repository methods:
-
-```java
-findByEmail(String email)
-```
-
-```java
-findByName(String name)
-```
-
-Spring automatically generates SQL.
-
----
-
-## 9. Pagination
-
-Purpose:
-
-Avoid loading huge datasets.
-
-Example:
+## Orders By Status
 
 ```http
-GET /users/paginated?page=0&size=5
-```
-
-Implementation:
-
-```java
-PageRequest.of(page,size)
-```
-
-Benefits:
-
-* Better performance
-* Scalable APIs
-
----
-
-## 10. Sorting
-
-Example:
-
-```http
-GET /users/paginated?page=0&size=5&sortBy=name
-```
-
-Implementation:
-
-```java
-Sort.by("name")
-```
-
----
-
-# JPA Relationships
-
----
-
-## 11. One-To-Many Relationship
-
-### User → Addresses
-
-One User can have many Addresses.
-
-```text
-User
- ├── Address 1
- ├── Address 2
- └── Address 3
-```
-
-Implementation:
-
-```java
-@OneToMany
-```
-
----
-
-## 12. Many-To-One Relationship
-
-### Address → User
-
-Many addresses belong to one user.
-
-```java
-@ManyToOne
-```
-
-Database:
-
-```text
-address
-   ↓
-user_id
-```
-
----
-
-## 13. Foreign Key
-
-Database:
-
-```text
-address.user_id
-```
-
-Purpose:
-
-Link address to user.
-
----
-
-## 14. Bidirectional Mapping
-
-Navigation from both sides.
-
-```text
-User → Address
-
-Address → User
-```
-
-Annotations:
-
-```java
-@OneToMany
-@ManyToOne
-```
-
----
-
-## 15. JSON Infinite Recursion Fix
-
-Problem:
-
-```text
-User
- ↓
-Address
- ↓
-User
- ↓
-Address
-```
-
-Infinite loop.
-
-Solution:
-
-```java
-@JsonManagedReference
-```
-
-```java
-@JsonBackReference
-```
-
----
-
-## 16. Lazy Loading
-
-Used:
-
-```java
-fetch = FetchType.LAZY
-```
-
-Benefits:
-
-* Better performance
-* Loads child entities only when needed
-
----
-
-## 17. Cascade Types
-
-Purpose:
-
-Automatically propagate operations.
-
-```java
-cascade = CascadeType.ALL
-```
-
-Includes:
-
-```text
-PERSIST
-MERGE
-REMOVE
-REFRESH
-DETACH
+GET /dashboard/orders/status
 ```
 
 Example:
 
-```text
-Save User
-      ↓
-Save Addresses
-```
-
-Automatically.
-
----
-
-## 18. Orphan Removal
-
-Used:
-
-```java
-orphanRemoval = true
-```
-
-Meaning:
-
-```text
-Remove Address from User
-           ↓
-Delete Address from DB
+```json
+[
+  ["DELIVERED", 5],
+  ["SHIPPED", 2],
+  ["PENDING", 3]
+]
 ```
 
 ---
 
-## 19. One-To-One Relationship
-
-### User ↔ Profile
-
-```text
-User
-  ↔
-Profile
-```
-
-One user has one profile.
-
-Annotations:
-
-```java
-@OneToOne
-@JoinColumn
-```
-
-Database:
-
-```text
-profile.user_id
-```
-
----
-
-## 20. Many-To-Many Relationship
-
-### User ↔ Role
-
-```text
-User
-  ↔
-Role
-```
-
-Examples:
-
-```text
-Ravi → ADMIN
-Ravi → USER
-```
-
-Role can belong to many users.
-
-Implementation:
-
-```java
-@ManyToMany
-@JoinTable
-```
-
-Join Table:
-
-```text
-user_role
-```
-
-Structure:
-
-```text
-user_id
-role_id
-```
-
----
-
-# Hibernate Concepts Learned
-
----
-
-## Entity
-
-```java
-@Entity
-```
-
-Represents database table.
-
----
-
-## Primary Key
-
-```java
-@Id
-@GeneratedValue
-```
-
-Auto-generated IDs.
-
----
-
-## Table Mapping
-
-```java
-@Table(name="user")
-```
-
-Maps class to table.
-
----
-
-## Column Mapping
-
-```java
-@Column
-```
-
-Maps fields to columns.
-
----
-
-# APIs Implemented
-
-## User APIs
+## Low Stock Products
 
 ```http
-GET    /users
-GET    /users/{id}
-POST   /users
-PUT    /users/{id}
-DELETE /users/{id}
+GET /dashboard/low-stock
+```
+
+Example:
+
+```json
+[
+  {
+    "id": 1,
+    "name": "iPhone 16",
+    "stock": 5
+  }
+]
 ```
 
 ---
 
-## Search APIs
+## Top Rated Products
 
 ```http
-GET /users/email/{email}
-GET /users/name/{name}
+GET /dashboard/top-rated
+```
+
+Example:
+
+```json
+[
+  [1, 4.9],
+  [3, 4.8],
+  [2, 4.7]
+]
 ```
 
 ---
 
-## Pagination
+## Monthly Revenue
 
 ```http
-GET /users/paginated
+GET /dashboard/monthly-revenue
+```
+
+Example:
+
+```json
+[
+  [1, 50000],
+  [2, 70000],
+  [3, 120000]
+]
 ```
 
 ---
 
-## Address APIs
+# 🏗️ Architecture
+
+NovaRetail follows a layered architecture.
+
+```text
+                    Client
+                 Postman / React
+                       |
+                       ↓
+                REST Controller
+                       |
+                       ↓
+                   Service
+                       |
+                       ↓
+                 Repository
+                       |
+                       ↓
+                Spring Data JPA
+                       |
+                       ↓
+                   Hibernate
+                       |
+                       ↓
+                    MySQL
+```
+
+---
+
+# 📁 Project Structure
+
+```text
+src
+└── main
+    ├── java
+    │   └── com.example.demo
+    │
+    │       ├── config
+    │       │   └── SecurityConfig.java
+    │       │
+    │       ├── controller
+    │       │   ├── AuthController.java
+    │       │   ├── ProductController.java
+    │       │   ├── CategoryController.java
+    │       │   ├── CartController.java
+    │       │   ├── WishlistController.java
+    │       │   ├── OrderController.java
+    │       │   ├── PaymentController.java
+    │       │   ├── ReviewController.java
+    │       │   ├── AddressController.java
+    │       │   └── DashboardController.java
+    │       │
+    │       ├── dto
+    │       │   ├── ProductResponseDTO.java
+    │       │   ├── OrderResponseDTO.java
+    │       │   ├── PaymentVerificationRequest.java
+    │       │   ├── ReviewRequestDTO.java
+    │       │   ├── ReviewResponseDTO.java
+    │       │   └── AddressDTO.java
+    │       │
+    │       ├── exception
+    │       │   └── UserNotFoundException.java
+    │       │
+    │       ├── model
+    │       │   ├── User.java
+    │       │   ├── Role.java
+    │       │   ├── Profile.java
+    │       │   ├── Address.java
+    │       │   ├── Category.java
+    │       │   ├── Product.java
+    │       │   ├── Wishlist.java
+    │       │   ├── Cart.java
+    │       │   ├── CartItem.java
+    │       │   ├── Order.java
+    │       │   ├── OrderItem.java
+    │       │   ├── OrderStatus.java
+    │       │   ├── Payment.java
+    │       │   ├── Review.java
+    │       │   ├── Coupon.java
+    │       │   └── InventoryHistory.java
+    │       │
+    │       ├── repository
+    │       │   ├── UserRepository.java
+    │       │   ├── ProductRepository.java
+    │       │   ├── CategoryRepository.java
+    │       │   ├── WishlistRepository.java
+    │       │   ├── CartRepository.java
+    │       │   ├── OrderRepository.java
+    │       │   ├── PaymentRepository.java
+    │       │   ├── ReviewRepository.java
+    │       │   ├── CouponRepository.java
+    │       │   ├── AddressRepository.java
+    │       │   └── InventoryHistoryRepository.java
+    │       │
+    │       ├── security
+    │       │   ├── JwtUtil.java
+    │       │   ├── JwtFilter.java
+    │       │   └── CustomUserDetailsService.java
+    │       │
+    │       ├── service
+    │       │   ├── AuthService.java
+    │       │   ├── ProductService.java
+    │       │   ├── CategoryService.java
+    │       │   ├── WishlistService.java
+    │       │   ├── CartService.java
+    │       │   ├── OrderService.java
+    │       │   ├── PaymentService.java
+    │       │   ├── ReviewService.java
+    │       │   ├── CouponService.java
+    │       │   ├── AddressService.java
+    │       │   └── DashboardService.java
+    │       │
+    │       └── DemoApplication.java
+    │
+    └── resources
+        └── application.properties
+```
+
+---
+
+# 🛠️ Technologies Used
+
+| Technology      | Purpose                        |
+| --------------- | ------------------------------ |
+| Java            | Programming language           |
+| Spring Boot     | Backend framework              |
+| Spring MVC      | REST API development           |
+| Spring Security | Authentication & authorization |
+| JWT             | Stateless authentication       |
+| Spring Data JPA | Database access                |
+| Hibernate       | ORM                            |
+| MySQL           | Relational database            |
+| BCrypt          | Password hashing               |
+| Razorpay        | Payment gateway                |
+| Maven           | Dependency management          |
+| Postman         | API testing                    |
+| Git/GitHub      | Version control                |
+
+---
+
+# 🔐 Security
+
+Security features implemented include:
+
+* JWT authentication
+* BCrypt password hashing
+* Stateless Spring Security sessions
+* Protected REST endpoints
+* Role-based access
+* Authorization header validation
+
+Example:
 
 ```http
-POST /users/{userId}/addresses
-GET  /users/{userId}/addresses
+Authorization: Bearer <JWT_TOKEN>
 ```
 
 ---
 
-## Profile APIs
+# 🗄️ Database
 
-```http
-POST /users/{userId}/profile
-GET  /users/{userId}/profile
-```
+The project uses MySQL.
 
----
-
-## Role APIs
-
-```http
-POST /users/roles
-POST /users/{userId}/roles/{roleId}
-```
-
----
-
-# Database Tables
+Main tables include:
 
 ```text
 user
-address
-profile
 role
 user_role
+profile
+address
+category
+product
+wishlist
+cart
+cart_item
+orders
+order_item
+payment
+review
+coupon
+inventory_history
 ```
 
 ---
 
-# Learning Progress
-
-Completed:
+# 🔄 Complete E-Commerce Flow
 
 ```text
-✅ REST APIs
-✅ Controller Layer
-✅ Service Layer
-✅ Repository Layer
-✅ MySQL Integration
-✅ Spring Data JPA
-✅ DTO Pattern
-✅ Validation
-✅ Exception Handling
-✅ Pagination
-✅ Sorting
-✅ Custom Queries
-✅ One-To-Many
-✅ Many-To-One
-✅ One-To-One
-✅ Many-To-Many
-✅ Cascade Types
-✅ Lazy Loading
-✅ Foreign Keys
-✅ Hibernate Mappings
+                    REGISTER
+                       ↓
+                     LOGIN
+                       ↓
+                  JWT TOKEN
+                       ↓
+              ┌────────┴────────┐
+              ↓                 ↓
+          Browse Products     Profile
+              ↓
+      Search / Filter / Sort
+              ↓
+       ┌──────┴──────┐
+       ↓             ↓
+    Wishlist       Cart
+                     ↓
+              Select Address
+                     ↓
+               Apply Coupon
+                     ↓
+              Place Order
+                     ↓
+              Check Stock
+                     ↓
+            Reduce Inventory
+                     ↓
+          Create Inventory Log
+                     ↓
+               Create Order
+                     ↓
+             Create Payment
+                     ↓
+            Razorpay Payment
+                     ↓
+             Verify Payment
+                     ↓
+                  PAID
+                     ↓
+                CONFIRMED
+                     ↓
+                 SHIPPED
+                     ↓
+                DELIVERED
+                     ↓
+              Review Product
 ```
 
 ---
 
-# Recommended Next Topics
+# 🧪 API Testing
 
-1. Spring Security
-2. JWT Authentication
-3. Role Based Authorization
-4. Audit Fields (createdAt, updatedAt)
-5. Lombok
-6. Swagger / OpenAPI
-7. Unit Testing (JUnit + Mockito)
-8. Docker
-9. Spring Profiles
-10. Microservices
+APIs were tested using **Postman**.
 
-The next topic should be:
+Testing included:
+
+* Successful requests
+* Invalid requests
+* Missing authentication
+* Expired JWT
+* Invalid JWT
+* Invalid product IDs
+* Invalid user IDs
+* Empty cart
+* Insufficient stock
+* Invalid coupons
+* Expired coupons
+* Duplicate wishlist items
+* Payment verification failures
+* Invalid order status
+* Invalid addresses
+* Review validation
+
+---
+
+# 🐛 Important Bugs & Lessons Learned
+
+During development, several real-world backend issues were encountered and resolved.
+
+## 1. Infinite JSON Recursion
+
+Bidirectional JPA relationships caused responses such as:
 
 ```text
-Spring Security + JWT Authentication
+User
+ ↓
+Order
+ ↓
+User
+ ↓
+Order
+ ↓
+User
+...
 ```
 
-because it builds directly on the User ↔ Role relationship already implemented.
+This resulted in:
+
+```text
+Document nesting depth exceeds maximum allowed
+```
+
+### Solution
+
+Used Jackson annotations such as:
+
+```java
+@JsonIgnore
+@JsonManagedReference
+@JsonBackReference
+```
+
+DTOs were also used where appropriate.
+
+---
+
+## 2. JWT Token Expired
+
+The application initially returned:
+
+```text
+JWT Token Expired
+401 Unauthorized
+```
+
+### Solution
+
+The JWT filter and token validation logic were corrected so that valid tokens are accepted and expired tokens are rejected properly.
+
+---
+
+## 3. Order Enum Mapping Error
+
+An error occurred because the database contained:
+
+```text
+PAID
+```
+
+while the Java enum did not contain the corresponding value.
+
+### Solution
+
+The `OrderStatus` enum was synchronized with the values stored in the database.
+
+```java
+PENDING
+PAID
+CONFIRMED
+SHIPPED
+DELIVERED
+CANCELLED
+REFUNDED
+```
+
+---
+
+## 4. Payment Not Found
+
+Payment verification initially failed when the Razorpay order ID sent by the client did not match the ID stored in the database.
+
+### Lesson
+
+Payment verification must use the correct Razorpay order ID and payment identifiers.
+
+---
+
+## 5. Stock Validation
+
+Orders cannot be placed when requested quantity exceeds available stock.
+
+Example:
+
+```text
+Stock = 3
+Requested = 5
+
+Result:
+Insufficient stock
+```
+
+---
+
+## 6. Address Ownership
+
+A user should not be able to place an order using another user's shipping address.
+
+The backend validates:
+
+```text
+Address.user.id == Order.user.id
+```
+
+---
+
+# 📊 Core Business Rules
+
+NovaRetail implements several important business rules.
+
+### Order
+
+```text
+Cart cannot be empty
+Stock must be sufficient
+Product stock is reduced
+Inventory history is recorded
+```
+
+### Coupon
+
+```text
+Coupon must exist
+Coupon must be active
+Coupon must not be expired
+```
+
+### Payment
+
+```text
+Payment belongs to an order
+Payment starts as PENDING
+Successful verification changes payment to SUCCESS
+Successful payment changes order to PAID
+```
+
+### Review
+
+```text
+Review belongs to a user
+Review belongs to a product
+Rating contributes to average rating
+```
+
+### Address
+
+```text
+Address belongs to a user
+Order uses a selected shipping address
+```
+
+---
+
+# ⚙️ Setup & Installation
+
+## Prerequisites
+
+Install:
+
+* Java 21
+* Maven
+* MySQL
+* Postman
+* Git
+
+---
+
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/novaretail.git
+```
+
+```bash
+cd novaretail
+```
+
+---
+
+## 2. Create MySQL Database
+
+Open MySQL:
+
+```sql
+CREATE DATABASE novaretail;
+```
+
+---
+
+## 3. Configure Database
+
+Update:
+
+```text
+src/main/resources/application.properties
+```
+
+Example:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/novaretail
+spring.datasource.username=root
+spring.datasource.password=YOUR_PASSWORD
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+spring.jpa.open-in-view=false
+```
+
+---
+
+# 💳 Razorpay Configuration
+
+Configure Razorpay Test Mode credentials.
+
+```properties
+razorpay.key.id=YOUR_RAZORPAY_KEY
+razorpay.key.secret=YOUR_RAZORPAY_SECRET
+```
+
+**Never commit real Razorpay credentials to GitHub.**
+
+Use environment variables or a local configuration file that is excluded from Git.
+
+---
+
+# ▶️ Running the Application
+
+Using Maven:
+
+```bash
+mvn spring-boot:run
+```
+
+Or run:
+
+```text
+DemoApplication.java
+```
+
+The application runs by default on:
+
+```text
+http://localhost:8080
+```
+
+---
+
+# 🔑 Authentication Example
+
+### Login
+
+```http
+POST /auth/login
+```
+
+Example:
+
+```json
+{
+  "email": "user@gmail.com",
+  "password": "password"
+}
+```
+
+The response provides a JWT token.
+
+For protected APIs:
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+---
+
+# 📌 Important API Examples
+
+## Authentication
+
+```text
+POST /auth/register
+POST /auth/login
+```
+
+## Products
+
+```text
+GET /products
+GET /products/{id}
+POST /products
+PUT /products/{id}
+DELETE /products/{id}
+```
+
+## Search / Filtering
+
+```text
+GET /products/search
+GET /products/filter
+GET /products/sort
+```
+
+## Wishlist
+
+```text
+POST /wishlist
+GET /wishlist/{userId}
+DELETE /wishlist/{id}
+```
+
+## Cart
+
+```text
+POST /cart/add
+GET /cart/{userId}
+PUT /cart/update
+DELETE /cart/remove
+```
+
+## Orders
+
+```text
+POST /orders/place/{userId}/{addressId}
+GET /orders/user/{userId}
+GET /orders/{orderId}
+PUT /orders/{orderId}/status
+```
+
+## Payments
+
+```text
+POST /payments/create/{orderId}
+GET /payments/{orderId}
+POST /payments/verify
+```
+
+## Reviews
+
+```text
+POST /reviews
+GET /reviews/product/{productId}
+GET /reviews/rating/{productId}
+PUT /reviews/{reviewId}
+DELETE /reviews/{reviewId}
+```
+
+## Addresses
+
+```text
+POST /address/{userId}
+GET /address/{userId}
+PUT /address/{addressId}
+DELETE /address/{addressId}
+```
+
+## Dashboard
+
+```text
+GET /dashboard
+GET /dashboard/orders/status
+GET /dashboard/low-stock
+GET /dashboard/top-rated
+GET /dashboard/monthly-revenue
+```
+
+---
+
+# 📈 Future Improvements
+
+The following features can be added in future versions:
+
+* React frontend
+* Admin dashboard UI
+* Refresh token mechanism
+* Email notifications
+* Order confirmation emails
+* Invoice generation
+* PDF invoices
+* Redis caching
+* Advanced product recommendations
+* Pagination for product APIs
+* Pagination for reviews
+* Advanced reporting
+* Automated unit tests
+* Integration tests
+* Docker
+* CI/CD
+* Cloud deployment
+* AWS deployment
+* Image/file upload
+* Product image management
+* Delivery partner integration
+
+---
+
+# 🎯 Learning Outcomes
+
+Through NovaRetail, the following concepts were practiced:
+
+* REST API development
+* Spring Boot
+* Spring MVC
+* Spring Security
+* JWT authentication
+* BCrypt password hashing
+* Role-based authorization
+* Spring Data JPA
+* Hibernate ORM
+* Entity relationships
+* DTO design
+* Repository queries
+* Business logic
+* Database design
+* Inventory management
+* Payment gateway integration
+* Exception handling
+* JSON serialization
+* API testing
+* Debugging
+* Git/GitHub workflow
+
+---
+
+# 🧠 Project Highlights
+
+The most important part of NovaRetail is that it goes beyond basic CRUD.
+
+The project implements real business workflows:
+
+```text
+Authentication
+      +
+Authorization
+      +
+Product Management
+      +
+Cart
+      +
+Inventory
+      +
+Coupon
+      +
+Order
+      +
+Payment
+      +
+Shipping
+      +
+Reviews
+      +
+Analytics
+```
+
+This makes NovaRetail a practical backend project for demonstrating **Spring Boot and backend development skills**.
+
+---
+
+# 👨‍💻 Author
+
+**Your Name**
+
+GitHub:
+
+```text
+https://github.com/YOUR_USERNAME
+```
+
+LinkedIn:
+
+```text
+https://linkedin.com/in/YOUR_PROFILE
+```
+
+---
+
+# 📄 License
+
+This project is intended for learning and portfolio purposes.
+
+You may modify and extend it for educational and personal projects.
+
+---
+
+## ⭐ If You Like This Project
+
+If NovaRetail helped demonstrate your learning journey, consider giving the repository a ⭐ on GitHub.
+
+---
+
+# 📌 Project Status
+
+```text
+Backend API       ✅
+Authentication    ✅
+JWT Security      ✅
+Products          ✅
+Search            ✅
+Filtering         ✅
+Sorting            ✅
+Wishlist          ✅
+Cart              ✅
+Inventory         ✅
+Coupons           ✅
+Orders            ✅
+Payments          ✅
+Reviews           ✅
+Ratings           ✅
+Addresses         ✅
+Order Tracking    ✅
+Analytics         ✅
+React Frontend    🔜
+```
