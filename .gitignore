@@ -58,3 +58,8 @@ Thumbs.db
 *~
 .project
 .classpath
+
+
+### React ###
+**/node_modules/
+**/dist/

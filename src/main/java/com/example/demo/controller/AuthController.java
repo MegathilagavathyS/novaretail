@@ -28,7 +28,9 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
+    // =========================
     // REGISTER
+    // =========================
 
     @PostMapping("/register")
     public String register(
@@ -52,15 +54,17 @@ public class AuthController {
                 passwordEncoder.encode(
                         request.getPassword()));
 
-        user.setRole(
-                request.getRole().toUpperCase());
+        // Public registration always creates USER
+        user.setRole("USER");
 
         userRepository.save(user);
 
         return "User Registered Successfully";
     }
 
+    // =========================
     // LOGIN
+    // =========================
 
     @PostMapping("/login")
     public LoginResponse login(
