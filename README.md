@@ -1347,18 +1347,12 @@ This makes NovaRetail a practical backend project for demonstrating **Spring Boo
 
 # 👨‍💻 Author
 
-**Your Name**
+**Megathilagavathy S**
 
 GitHub:
 
 ```text
-https://github.com/YOUR_USERNAME
-```
-
-LinkedIn:
-
-```text
-https://linkedin.com/in/YOUR_PROFILE
+https://github.com/MegathilagavathyS
 ```
 
 ---
