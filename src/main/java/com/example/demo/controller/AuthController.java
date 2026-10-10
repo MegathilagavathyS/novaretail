@@ -90,8 +90,11 @@ public class AuthController {
 
         String token =
                 jwtUtil.generateToken(
-                        user.getEmail());
+                        user.getEmail(),
+                        user.getRole());
 
-        return new LoginResponse(token);
+        return new LoginResponse(
+                token,
+                user.getRole());
     }
 }

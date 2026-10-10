@@ -9,8 +9,8 @@ public class ProductResponseDTO {
     private Integer stock;
     private String categoryName;
     private Double averageRating;
-
     private Integer reviewCount;
+
     public ProductResponseDTO() {
     }
 
@@ -56,5 +56,13 @@ public class ProductResponseDTO {
 
     public String getCategoryName() {
         return categoryName;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
     }
 }
