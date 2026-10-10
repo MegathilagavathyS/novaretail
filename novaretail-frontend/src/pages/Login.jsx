@@ -1,105 +1,60 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 
-function Login() {
-
+function Login({ onSignedIn }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-
+    const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async (event) => {
-
         event.preventDefault();
         setError("");
-
+        setSubmitting(true);
         try {
+            const { data } = await api.post("/auth/login", { email, password });
+            if (!data?.token) throw new Error("The sign-in service did not return an access token.");
 
-            const response = await api.post("/auth/login", {
-                email: email,
-                password: password
-            });
+            localStorage.setItem("token", data.token);
+            const { data: user } = await api.get(`/users/email/${encodeURIComponent(email)}`);
+            if (!user?.id) throw new Error("Your account was verified, but we couldn't load your profile.");
 
-            console.log("Login response:", response.data);
-
-            const token = response.data.token;
-
-            if (!token) {
-                setError("Token was not returned by backend.");
-                return;
-            }
-
-            localStorage.setItem("token", token);
-
-            navigate("/");
-
-        } catch (error) {
-
-            console.error("Login error:", error);
-
-            if (error.response) {
-                setError(
-                    error.response.data?.message ||
-                    "Login failed"
-                );
-            } else {
-                setError("Cannot connect to backend.");
-            }
+            localStorage.setItem("userId", String(user.id));
+            localStorage.setItem("userName", user.name || "");
+            onSignedIn();
+            navigate("/products");
+        } catch (requestError) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("userId");
+            localStorage.removeItem("userName");
+            setError(requestError.response?.data?.message || requestError.message || "Sign-in failed. Check your details and try again.");
+        } finally {
+            setSubmitting(false);
         }
     };
 
     return (
-        <div className="login-container">
-
-            <h1>NovaRetail</h1>
-
-            <h2>Login</h2>
-
-            {error && (
-                <p className="error">
-                    {error}
-                </p>
-            )}
-
-            <form onSubmit={handleLogin}>
-
-                <div>
-                    <label>Email</label>
-
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(event) =>
-                            setEmail(event.target.value)
-                        }
-                        placeholder="Enter your email"
-                        required
-                    />
-                </div>
-
-                <div>
-                    <label>Password</label>
-
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(event) =>
-                            setPassword(event.target.value)
-                        }
-                        placeholder="Enter your password"
-                        required
-                    />
-                </div>
-
-                <button type="submit">
-                    Login
-                </button>
-
-            </form>
-
-        </div>
+        <section className="auth-page">
+            <div className="auth-art">
+                <span className="eyebrow">WELCOME BACK</span>
+                <div className="auth-art-circle"><span>good<br />things<br /><i>inside</i></span></div>
+                <span className="auth-art-caption">YOUR EVERYDAY, A LITTLE BETTER ✳</span>
+            </div>
+            <div className="auth-form-wrap">
+                <span className="eyebrow"><span className="eyebrow-dot" /> PICK UP WHERE YOU LEFT OFF</span>
+                <h1>Good to see<br />you <span>again.</span></h1>
+                <p className="auth-description">Sign in to keep your finds close.</p>
+                {error && <p className="form-message form-error" role="alert">{error}</p>}
+                <form className="auth-form" onSubmit={handleLogin}>
+                    <label>Email address<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" required /></label>
+                    <label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" autoComplete="current-password" required /></label>
+                    <button className="button button-dark auth-submit" type="submit" disabled={submitting}>{submitting ? "Signing you in…" : "Sign in"} <span aria-hidden="true">↗</span></button>
+                </form>
+                <p className="auth-switch">New to NovaRetail? <Link to="/register">Create an account</Link></p>
+            </div>
+        </section>
     );
 }
 

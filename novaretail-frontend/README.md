@@ -1,16 +1,26 @@
-# React + Vite
+# NovaRetail storefront
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Responsive React storefront for the NovaRetail Spring Boot API. It includes a landing page, authenticated product browsing with search/category/sort controls, sign-in and registration, and a cart view.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Start the Spring Boot API from the repository root. Vite proxies frontend API requests to `http://localhost:8080`.
+2. In this directory, run `npm install` once, then `npm run dev`.
+3. Open the Vite URL shown in the terminal (usually `http://localhost:5173`).
 
-## React Compiler
+To use a different API URL (for example, when deploying the frontend outside Vite), set `VITE_API_BASE_URL` in a `.env` file in this directory, for example:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```env
+VITE_API_BASE_URL=http://localhost:8080
+```
 
-## Expanding the Oxlint configuration
+The Vite development proxy avoids browser CORS issues locally. Direct browser requests to the API require the origin to be allowed by the backend CORS configuration.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+The catalog, account, and cart screens call the existing backend endpoints. Product photos and checkout/removal actions are not included because the current API does not expose those fields/actions.
+
+## Checks
+
+```sh
+npm run lint
+npm run build
+```
