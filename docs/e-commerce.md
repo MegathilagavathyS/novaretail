@@ -2,7 +2,7 @@
 
 ## Technologies Used
 
-* Java 17+
+* Java 25+
 * Spring Boot
 * Spring Web
 * Spring Data JPA

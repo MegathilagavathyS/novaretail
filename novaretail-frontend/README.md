@@ -1,6 +1,8 @@
 # NovaRetail storefront
 
-Responsive React storefront for the NovaRetail Spring Boot API. It includes a landing page, authenticated product browsing with search/category/sort controls, sign-in and registration, and a cart view.
+Responsive React storefront and admin console for the NovaRetail Spring Boot API. The customer experience includes a landing page, authenticated product browsing with search/category/sort controls, sign-in and registration, and a cart view. Admin accounts can view store analytics, create/delete products, and create categories.
+
+Admin access is determined from the role returned by `/auth/login`. Backend authorization remains authoritative; admin API calls are protected by Spring Security. The admin UI intentionally does not offer product editing (no update endpoint exists) or category deletion (the current entity cascade can remove related products).
 
 ## Run locally
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 function Login({ onSignedIn }) {
@@ -8,6 +8,7 @@ function Login({ onSignedIn }) {
     const [error, setError] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -18,17 +19,20 @@ function Login({ onSignedIn }) {
             if (!data?.token) throw new Error("The sign-in service did not return an access token.");
 
             localStorage.setItem("token", data.token);
+            const userRole = String(data.role || "").replace(/^ROLE_/i, "").toUpperCase();
             const { data: user } = await api.get(`/users/email/${encodeURIComponent(email)}`);
             if (!user?.id) throw new Error("Your account was verified, but we couldn't load your profile.");
 
             localStorage.setItem("userId", String(user.id));
             localStorage.setItem("userName", user.name || "");
-            onSignedIn();
-            navigate("/products");
+            localStorage.setItem("role", userRole);
+            onSignedIn(userRole);
+            navigate(userRole === "ADMIN" ? "/admin" : location.state?.from || "/products");
         } catch (requestError) {
             localStorage.removeItem("token");
             localStorage.removeItem("userId");
             localStorage.removeItem("userName");
+            localStorage.removeItem("role");
             setError(requestError.response?.data?.message || requestError.message || "Sign-in failed. Check your details and try again.");
         } finally {
             setSubmitting(false);
